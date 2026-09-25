@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Jharicast/Jharicast.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Jharicast.Tests/Jharicast.Tests.csproj" />
+  </Folder>
+</Solution>

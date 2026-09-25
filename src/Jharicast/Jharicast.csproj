@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pure domain (ADR-0003): no PackageReference and no ProjectReference, ever. Consumers of the
+       rules must not inherit a dependency. Shared settings come from src/Directory.Build.props. -->
+  <PropertyGroup>
+    <RootNamespace>Jharicast</RootNamespace>
+    <Description>Route and day rules over weather model output and official warnings: alert levels, ensemble statistics, trip switch rules and material change detection. No I/O.</Description>
+  </PropertyGroup>
+</Project>

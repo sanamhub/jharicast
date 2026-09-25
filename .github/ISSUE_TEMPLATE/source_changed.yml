@@ -1,0 +1,23 @@
+name: Source changed or broke
+description: A government site or API that Jharicast reads changed its format, moved, or stopped answering.
+labels: [source]
+body:
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      placeholder: DHM district warnings, DoR road closures, BIPAD alerts, Open-Meteo ensemble
+    validations:
+      required: true
+  - type: textarea
+    id: symptom
+    attributes:
+      label: What `jharicast sources check` or the error says
+      description: Paste the output. Do not paste API keys or personal data.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: since
+    attributes:
+      label: First noticed (date and time, Nepal time)

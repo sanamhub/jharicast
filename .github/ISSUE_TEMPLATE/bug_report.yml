@@ -1,0 +1,36 @@
+name: Bug report
+description: Something in Jharicast does not work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security problems go through [a private advisory](https://github.com/sanamhub/jharicast/security/advisories/new), not here.
+        Never paste a token, webhook URL, phone number or email address into an issue.
+  - type: textarea
+    id: repro
+    attributes:
+      label: Code that reproduces it
+      description: The smallest snippet that shows the problem.
+      render: csharp
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual result
+      description: What you expected, what happened, and the full exception if there was one.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Jharicast version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: dotnet
+    attributes:
+      label: .NET version and OS
+      description: Output of `dotnet --version`, and the OS.
