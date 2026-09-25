@@ -1,0 +1,61 @@
+#nullable enable
+Jharicast.OpenMeteo.EnsembleDaily
+Jharicast.OpenMeteo.EnsembleDaily.<Clone>$() -> Jharicast.OpenMeteo.EnsembleDaily!
+Jharicast.OpenMeteo.EnsembleDaily.Days.get -> System.Collections.Generic.IReadOnlyList<System.DateOnly>!
+Jharicast.OpenMeteo.EnsembleDaily.Days.init -> void
+Jharicast.OpenMeteo.EnsembleDaily.Deconstruct(out double Latitude, out double Longitude, out System.Collections.Generic.IReadOnlyList<System.DateOnly>! Days, out System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyList<double?>!>! Members) -> void
+Jharicast.OpenMeteo.EnsembleDaily.EnsembleDaily(double Latitude, double Longitude, System.Collections.Generic.IReadOnlyList<System.DateOnly>! Days, System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyList<double?>!>! Members) -> void
+Jharicast.OpenMeteo.EnsembleDaily.Equals(Jharicast.OpenMeteo.EnsembleDaily? other) -> bool
+Jharicast.OpenMeteo.EnsembleDaily.Latitude.get -> double
+Jharicast.OpenMeteo.EnsembleDaily.Latitude.init -> void
+Jharicast.OpenMeteo.EnsembleDaily.Longitude.get -> double
+Jharicast.OpenMeteo.EnsembleDaily.Longitude.init -> void
+Jharicast.OpenMeteo.EnsembleDaily.Members.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyList<double?>!>!
+Jharicast.OpenMeteo.EnsembleDaily.Members.init -> void
+Jharicast.OpenMeteo.EnsembleDaily.Provenance.get -> Jharicast.Provenance?
+Jharicast.OpenMeteo.EnsembleDaily.Provenance.init -> void
+Jharicast.OpenMeteo.EnsembleResponseReader
+Jharicast.OpenMeteo.ForecastDaily
+Jharicast.OpenMeteo.ForecastDaily.<Clone>$() -> Jharicast.OpenMeteo.ForecastDaily!
+Jharicast.OpenMeteo.ForecastDaily.Days.get -> System.Collections.Generic.IReadOnlyList<System.DateOnly>!
+Jharicast.OpenMeteo.ForecastDaily.Days.init -> void
+Jharicast.OpenMeteo.ForecastDaily.Deconstruct(out string! Model, out double Latitude, out double Longitude, out System.Collections.Generic.IReadOnlyList<System.DateOnly>! Days, out System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<double?>!>! Variables) -> void
+Jharicast.OpenMeteo.ForecastDaily.Equals(Jharicast.OpenMeteo.ForecastDaily? other) -> bool
+Jharicast.OpenMeteo.ForecastDaily.ForecastDaily(string! Model, double Latitude, double Longitude, System.Collections.Generic.IReadOnlyList<System.DateOnly>! Days, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<double?>!>! Variables) -> void
+Jharicast.OpenMeteo.ForecastDaily.Latitude.get -> double
+Jharicast.OpenMeteo.ForecastDaily.Latitude.init -> void
+Jharicast.OpenMeteo.ForecastDaily.Longitude.get -> double
+Jharicast.OpenMeteo.ForecastDaily.Longitude.init -> void
+Jharicast.OpenMeteo.ForecastDaily.Model.get -> string!
+Jharicast.OpenMeteo.ForecastDaily.Model.init -> void
+Jharicast.OpenMeteo.ForecastDaily.Provenance.get -> Jharicast.Provenance?
+Jharicast.OpenMeteo.ForecastDaily.Provenance.init -> void
+Jharicast.OpenMeteo.ForecastDaily.Variables.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<double?>!>!
+Jharicast.OpenMeteo.ForecastDaily.Variables.init -> void
+Jharicast.OpenMeteo.OpenMeteoClient
+Jharicast.OpenMeteo.OpenMeteoClient.GetDailyAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! points, System.Collections.Generic.IReadOnlyList<string!>! models, System.Collections.Generic.IReadOnlyList<string!>! variables, int days, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<Jharicast.OpenMeteo.ForecastDaily!>!>!>!
+Jharicast.OpenMeteo.OpenMeteoClient.GetEnsembleDailyAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! points, string! model, System.Collections.Generic.IReadOnlyList<string!>! variables, int days, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<Jharicast.OpenMeteo.EnsembleDaily!>!>!>!
+Jharicast.OpenMeteo.OpenMeteoClient.OpenMeteoClient(System.Net.Http.HttpClient! httpClient, Jharicast.OpenMeteo.OpenMeteoOptions! options) -> void
+Jharicast.OpenMeteo.OpenMeteoOptions
+Jharicast.OpenMeteo.OpenMeteoOptions.ApiKey.get -> string?
+Jharicast.OpenMeteo.OpenMeteoOptions.ApiKey.init -> void
+Jharicast.OpenMeteo.OpenMeteoOptions.BaseAddress.get -> System.Uri!
+Jharicast.OpenMeteo.OpenMeteoOptions.BaseAddress.init -> void
+Jharicast.OpenMeteo.OpenMeteoOptions.EnsembleBaseAddress.get -> System.Uri!
+Jharicast.OpenMeteo.OpenMeteoOptions.EnsembleBaseAddress.init -> void
+Jharicast.OpenMeteo.OpenMeteoOptions.OpenMeteoOptions() -> void
+Jharicast.OpenMeteo.OpenMeteoOptions.TimeProvider.get -> System.TimeProvider!
+Jharicast.OpenMeteo.OpenMeteoOptions.TimeProvider.init -> void
+Jharicast.OpenMeteo.OpenMeteoOptions.TimeZone.get -> string!
+Jharicast.OpenMeteo.OpenMeteoOptions.TimeZone.init -> void
+override Jharicast.OpenMeteo.EnsembleDaily.Equals(object? obj) -> bool
+override Jharicast.OpenMeteo.EnsembleDaily.GetHashCode() -> int
+override Jharicast.OpenMeteo.EnsembleDaily.ToString() -> string!
+override Jharicast.OpenMeteo.ForecastDaily.Equals(object? obj) -> bool
+override Jharicast.OpenMeteo.ForecastDaily.GetHashCode() -> int
+override Jharicast.OpenMeteo.ForecastDaily.ToString() -> string!
+static Jharicast.OpenMeteo.EnsembleDaily.operator !=(Jharicast.OpenMeteo.EnsembleDaily? left, Jharicast.OpenMeteo.EnsembleDaily? right) -> bool
+static Jharicast.OpenMeteo.EnsembleDaily.operator ==(Jharicast.OpenMeteo.EnsembleDaily? left, Jharicast.OpenMeteo.EnsembleDaily? right) -> bool
+static Jharicast.OpenMeteo.EnsembleResponseReader.ReadDaily(System.ReadOnlyMemory<byte> utf8Json, string! variable) -> System.Collections.Generic.IReadOnlyList<Jharicast.OpenMeteo.EnsembleDaily!>!
+static Jharicast.OpenMeteo.ForecastDaily.operator !=(Jharicast.OpenMeteo.ForecastDaily? left, Jharicast.OpenMeteo.ForecastDaily? right) -> bool
+static Jharicast.OpenMeteo.ForecastDaily.operator ==(Jharicast.OpenMeteo.ForecastDaily? left, Jharicast.OpenMeteo.ForecastDaily? right) -> bool

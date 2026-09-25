@@ -13,5 +13,8 @@
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
     <ProjectReference Include="../../src/Jharicast/Jharicast.csproj" />
     <ProjectReference Include="../../src/Jharicast.Fetch/Jharicast.Fetch.csproj" />
+    <ProjectReference Include="../../src/Jharicast.OpenMeteo/Jharicast.OpenMeteo.csproj" />
+    <!-- Recorded public responses (ADR-0013). Tests read these, never a live endpoint. -->
+    <None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Jharicast.OpenMeteo</RootNamespace>
+    <Description>Open-Meteo forecast and ensemble readers and client for Jharicast. One model per ensemble request, Nepal-day aligned. Open-Meteo's free API is for non-commercial use only; data is CC BY 4.0.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Jharicast/Jharicast.csproj" />
+  </ItemGroup>
+</Project>
