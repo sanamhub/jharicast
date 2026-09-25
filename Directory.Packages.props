@@ -10,5 +10,9 @@
   <ItemGroup>
     <PackageVersion Include="xunit.v3" Version="4.0.1" />
     <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.10.0" />
+    <!-- The CLI's parser. Pinned to the build already in the local package cache, because this
+         change was made with no network access; move to the stable 2.0 line on the next online
+         restore. -->
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta5.25277.114" />
   </ItemGroup>
 </Project>

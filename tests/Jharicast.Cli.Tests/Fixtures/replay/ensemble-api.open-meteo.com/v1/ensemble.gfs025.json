@@ -1,0 +1,574 @@
+{
+ "latitude": 27.5,
+ "longitude": 83.25,
+ "utc_offset_seconds": 20700,
+ "daily": {
+  "time": [
+   "2026-09-24",
+   "2026-09-25",
+   "2026-09-26",
+   "2026-09-27",
+   "2026-09-28",
+   "2026-09-29",
+   "2026-09-30"
+  ],
+  "precipitation_sum": [
+   18,
+   15,
+   12,
+   20,
+   1,
+   0,
+   0
+  ],
+  "precipitation_sum_member01": [
+   19,
+   16,
+   13,
+   21,
+   2,
+   1,
+   1
+  ],
+  "precipitation_sum_member02": [
+   20,
+   17,
+   14,
+   22,
+   3,
+   2,
+   2
+  ],
+  "precipitation_sum_member03": [
+   21,
+   18,
+   15,
+   23,
+   4,
+   3,
+   3
+  ],
+  "precipitation_sum_member04": [
+   22,
+   19,
+   16,
+   24,
+   5,
+   4,
+   4
+  ],
+  "precipitation_sum_member05": [
+   18,
+   15,
+   12,
+   20,
+   1,
+   0,
+   0
+  ],
+  "precipitation_sum_member06": [
+   19,
+   16,
+   13,
+   21,
+   2,
+   1,
+   1
+  ],
+  "precipitation_sum_member07": [
+   20,
+   17,
+   14,
+   22,
+   3,
+   2,
+   2
+  ],
+  "precipitation_sum_member08": [
+   21,
+   18,
+   15,
+   23,
+   4,
+   3,
+   3
+  ],
+  "precipitation_sum_member09": [
+   22,
+   19,
+   16,
+   24,
+   5,
+   4,
+   4
+  ],
+  "precipitation_sum_member10": [
+   18,
+   15,
+   12,
+   20,
+   1,
+   0,
+   0
+  ],
+  "precipitation_sum_member11": [
+   19,
+   16,
+   13,
+   21,
+   2,
+   1,
+   1
+  ],
+  "precipitation_sum_member12": [
+   20,
+   17,
+   14,
+   22,
+   3,
+   2,
+   2
+  ],
+  "precipitation_sum_member13": [
+   21,
+   18,
+   15,
+   23,
+   4,
+   3,
+   3
+  ],
+  "precipitation_sum_member14": [
+   22,
+   19,
+   16,
+   24,
+   5,
+   4,
+   4
+  ],
+  "precipitation_sum_member15": [
+   18,
+   15,
+   12,
+   20,
+   1,
+   0,
+   0
+  ],
+  "precipitation_sum_member16": [
+   19,
+   16,
+   13,
+   21,
+   2,
+   1,
+   1
+  ],
+  "precipitation_sum_member17": [
+   20,
+   17,
+   14,
+   22,
+   3,
+   2,
+   2
+  ],
+  "precipitation_sum_member18": [
+   21,
+   18,
+   15,
+   23,
+   4,
+   3,
+   3
+  ],
+  "precipitation_sum_member19": [
+   22,
+   19,
+   16,
+   24,
+   5,
+   4,
+   4
+  ],
+  "precipitation_sum_member20": [
+   18,
+   15,
+   12,
+   20,
+   1,
+   0,
+   0
+  ],
+  "precipitation_sum_member21": [
+   19,
+   16,
+   13,
+   21,
+   2,
+   1,
+   1
+  ],
+  "precipitation_sum_member22": [
+   20,
+   17,
+   14,
+   22,
+   3,
+   2,
+   2
+  ],
+  "precipitation_sum_member23": [
+   21,
+   18,
+   15,
+   23,
+   4,
+   3,
+   3
+  ],
+  "precipitation_sum_member24": [
+   22,
+   19,
+   16,
+   24,
+   5,
+   4,
+   4
+  ],
+  "precipitation_sum_member25": [
+   18,
+   15,
+   12,
+   20,
+   1,
+   0,
+   0
+  ],
+  "precipitation_sum_member26": [
+   19,
+   16,
+   13,
+   21,
+   2,
+   1,
+   1
+  ],
+  "precipitation_sum_member27": [
+   20,
+   17,
+   14,
+   22,
+   3,
+   2,
+   2
+  ],
+  "precipitation_sum_member28": [
+   21,
+   18,
+   15,
+   23,
+   4,
+   3,
+   3
+  ],
+  "precipitation_sum_member29": [
+   22,
+   19,
+   16,
+   24,
+   5,
+   4,
+   4
+  ],
+  "precipitation_sum_member30": [
+   18,
+   15,
+   12,
+   20,
+   1,
+   0,
+   0
+  ],
+  "wind_gusts_10m_max": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member01": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member02": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member03": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member04": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member05": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member06": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member07": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member08": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member09": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member10": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member11": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member12": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member13": [
+   25,
+   25,
+   50,
+   48,
+   45,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member14": [
+   25,
+   25,
+   50,
+   48,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member15": [
+   25,
+   25,
+   50,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member16": [
+   25,
+   25,
+   50,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member17": [
+   25,
+   25,
+   50,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member18": [
+   25,
+   25,
+   50,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member19": [
+   25,
+   25,
+   50,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member20": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member21": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member22": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member23": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member24": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member25": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member26": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member27": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member28": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member29": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ],
+  "wind_gusts_10m_max_member30": [
+   25,
+   25,
+   30,
+   30,
+   30,
+   20,
+   20
+  ]
+ }
+}

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The jharicast command (ADR-0003, Presentation). A .NET tool, so its package carries every
+       Jharicast assembly it uses, Jharicast.Nepal included: release.yml must hold this package
+       back for as long as it holds back Jharicast.Nepal (ADR-0007, ADR-0014). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Jharicast.Cli</RootNamespace>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>jharicast</ToolCommandName>
+    <PackageId>Jharicast.Cli</PackageId>
+    <Description>The jharicast command: per-leg, per-day trip rules for Nepal from global weather models, DHM warnings and DoR closures, with the data times, source health and attributions of every answer. Not an official forecast.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/sanamhub/jharicast</PackageProjectUrl>
+    <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
+    <!-- Output is English only; without this the package carries 13 System.CommandLine resource folders. -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+    <ProjectReference Include="../../src/Jharicast/Jharicast.csproj" />
+    <ProjectReference Include="../../src/Jharicast.Fetch/Jharicast.Fetch.csproj" />
+    <ProjectReference Include="../../src/Jharicast.OpenMeteo/Jharicast.OpenMeteo.csproj" />
+    <ProjectReference Include="../../src/Jharicast.Routing/Jharicast.Routing.csproj" />
+    <ProjectReference Include="../../src/Jharicast.Nepal/Jharicast.Nepal.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PACKAGE.md" Pack="true" PackagePath="/" />
+    <InternalsVisibleTo Include="Jharicast.Cli.Tests" />
+  </ItemGroup>
+</Project>

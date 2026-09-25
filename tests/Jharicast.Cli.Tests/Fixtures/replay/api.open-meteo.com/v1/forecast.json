@@ -1,0 +1,71 @@
+{
+ "latitude": 27.5,
+ "longitude": 83.25,
+ "utc_offset_seconds": 20700,
+ "timezone": "Asia/Kathmandu",
+ "daily": {
+  "time": [
+   "2026-09-24",
+   "2026-09-25",
+   "2026-09-26",
+   "2026-09-27",
+   "2026-09-28",
+   "2026-09-29",
+   "2026-09-30"
+  ],
+  "precipitation_sum_ecmwf_ifs025": [
+   30,
+   25,
+   23,
+   52,
+   1,
+   0,
+   2
+  ],
+  "precipitation_sum_gfs_seamless": [
+   28,
+   20,
+   19,
+   13,
+   10,
+   9,
+   3
+  ],
+  "precipitation_sum_icon_seamless": [
+   40,
+   35,
+   127,
+   265,
+   1,
+   0,
+   0
+  ],
+  "wind_gusts_10m_max_ecmwf_ifs025": [
+   30,
+   32,
+   60,
+   58,
+   35,
+   27,
+   31
+  ],
+  "wind_gusts_10m_max_gfs_seamless": [
+   25,
+   28,
+   53,
+   44,
+   31,
+   17,
+   12
+  ],
+  "wind_gusts_10m_max_icon_seamless": [
+   28,
+   30,
+   82,
+   62,
+   24,
+   20,
+   27
+  ]
+ }
+}

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+    <!-- CI runs dotnet test with coverage and a TRX report; both are runner extensions. -->
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <ProjectReference Include="../../tools/Jharicast.Cli/Jharicast.Cli.csproj" />
+  </ItemGroup>
+  <!-- A replay directory for the fixtures option of jharicast, laid out host/path.json. The DHM, BIPAD, OSRM
+       and bulletin files are the Jharicast.Tests fixtures, linked rather than copied so there is
+       one copy of each recorded response in the repository. -->
+  <ItemGroup>
+    <None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/dhm-getapidata-1-2026-09-24.json" Link="Fixtures/replay/dhm.gov.np/home/getAPIData/1.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/osrm-route-birtamod-lumbini-synthetic.json" Link="Fixtures/replay/router.project-osrm.org/route/v1/driving.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
