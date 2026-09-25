@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -11,18 +12,25 @@ using System.Threading.Tasks;
 namespace Jharicast.OpenMeteo;
 
 /// <summary>
-/// Calls Open-Meteo's forecast and ensemble APIs (ADR-0012). Give it an <see cref="HttpClient"/>
-/// built on <c>Jharicast.Fetch.PoliteHttpHandler</c>, so the calls are identified, spaced and
-/// cached. Results come back in the order of the points asked for: Open-Meteo snaps coordinates
-/// to its grid, so match by position, not by latitude and longitude.
+/// Calls Open-Meteo's forecast, ensemble and elevation APIs (ADR-0012). Give it an
+/// <see cref="HttpClient"/> built on <c>Jharicast.Fetch.PoliteHttpHandler</c>, so the calls are
+/// identified and spaced. Results come back in the order of the points asked for: Open-Meteo snaps
+/// coordinates to its grid, so match by position, not by latitude and longitude. Model results are
+/// kept per point until the model's next run is expected, and elevations for the life of the
+/// client, so asking again costs no call.
 /// </summary>
 public sealed class OpenMeteoClient
 {
     // ADR-0012: up to 50 locations per request. Each still counts against the daily limit.
     internal const int MaxPointsPerRequest = 50;
 
+    // ADR-0010: the elevation API takes 100 points per call.
+    internal const int MaxElevationPointsPerRequest = 100;
+
     private readonly HttpClient _http;
     private readonly OpenMeteoOptions _options;
+    private readonly ModelRunCache _cache;
+    private readonly ConcurrentDictionary<(long, long), double> _elevations = new();
 
     /// <summary>Creates the client.</summary>
     /// <param name="httpClient">The client that sends requests; not disposed by this class.</param>
@@ -34,6 +42,7 @@ public sealed class OpenMeteoClient
         ArgumentNullException.ThrowIfNull(options);
         _http = httpClient;
         _options = options;
+        _cache = new ModelRunCache(options.TimeProvider, options.ModelRunLag);
     }
 
     /// <summary>
@@ -54,17 +63,31 @@ public sealed class OpenMeteoClient
         IReadOnlyList<GeoPoint> points, string model, IReadOnlyList<string> variables, int days, CancellationToken cancellationToken)
     {
         Validate(points, [model], variables, days);
-        var result = variables.ToDictionary(v => v, _ => new List<EnsembleDaily>(points.Count), StringComparer.Ordinal);
-        foreach (var batch in points.Chunk(MaxPointsPerRequest))
+        var result = variables.ToDictionary(v => v, _ => new EnsembleDaily[points.Count], StringComparer.Ordinal);
+        var missing = Enumerable.Range(0, points.Count).Where(i => !variables.All(v =>
         {
-            var uri = BuildUri(_options.EnsembleBaseAddress, "v1/ensemble", batch, [model], variables, days);
+            var hit = _cache.TryGet(ModelRunCache.Key.For("ensemble", model, points[i], v), days, out EnsembleDaily cached);
+            result[v][i] = hit ? Trim(cached, days) : null!;
+            return hit;
+        })).ToArray();
+
+        foreach (var batch in missing.Chunk(MaxPointsPerRequest))
+        {
+            var uri = BuildUri(_options.EnsembleBaseAddress, "v1/ensemble", [.. batch.Select(i => points[i])], [model], variables, days);
             var (body, fetchedAt) = await GetAsync(uri, cancellationToken).ConfigureAwait(false);
+            var offsets = UtcOffsets(body);
+            CheckCount(offsets.Count, batch.Length);
             var provenance = new Provenance($"open-meteo.ensemble.{model}", SourceKind.Model, fetchedAt);
             foreach (var variable in variables)
             {
                 var locations = EnsembleResponseReader.ReadDaily(body, variable);
                 CheckCount(locations.Count, batch.Length);
-                result[variable].AddRange(locations.Select(l => l with { Provenance = provenance }));
+                for (var j = 0; j < batch.Length; j++)
+                {
+                    var located = locations[j] with { Provenance = provenance };
+                    _cache.Set(ModelRunCache.Key.For("ensemble", model, points[batch[j]], variable), located, located.Days.Count, fetchedAt, offsets[j]);
+                    result[variable][batch[j]] = Trim(located, days);
+                }
             }
         }
 
@@ -89,20 +112,72 @@ public sealed class OpenMeteoClient
         IReadOnlyList<GeoPoint> points, IReadOnlyList<string> models, IReadOnlyList<string> variables, int days, CancellationToken cancellationToken)
     {
         Validate(points, models, variables, days);
-        var result = models.ToDictionary(m => m, _ => new List<ForecastDaily>(points.Count), StringComparer.Ordinal);
-        foreach (var batch in points.Chunk(MaxPointsPerRequest))
+        var result = models.ToDictionary(m => m, _ => new ForecastDaily[points.Count], StringComparer.Ordinal);
+        var missing = Enumerable.Range(0, points.Count).Where(i => !models.All(m =>
         {
-            var uri = BuildUri(_options.BaseAddress, "v1/forecast", batch, models, variables, days);
+            var hit = _cache.TryGet(ModelRunCache.Key.For("forecast", m, points[i], string.Join(',', variables)), days, out ForecastDaily cached);
+            result[m][i] = hit ? Trim(cached, days) : null!;
+            return hit;
+        })).ToArray();
+
+        foreach (var batch in missing.Chunk(MaxPointsPerRequest))
+        {
+            var uri = BuildUri(_options.BaseAddress, "v1/forecast", [.. batch.Select(i => points[i])], models, variables, days);
             var (body, fetchedAt) = await GetAsync(uri, cancellationToken).ConfigureAwait(false);
+            var offsets = UtcOffsets(body);
+            CheckCount(offsets.Count, batch.Length);
             foreach (var (model, locations) in ForecastResponseReader.ReadDaily(body, models, variables))
             {
                 CheckCount(locations.Count, batch.Length);
                 var provenance = new Provenance($"open-meteo.forecast.{model}", SourceKind.Model, fetchedAt);
-                result[model].AddRange(locations.Select(l => l with { Provenance = provenance }));
+                for (var j = 0; j < batch.Length; j++)
+                {
+                    var located = locations[j] with { Provenance = provenance };
+                    _cache.Set(ModelRunCache.Key.For("forecast", model, points[batch[j]], string.Join(',', variables)), located, located.Days.Count, fetchedAt, offsets[j]);
+                    result[model][batch[j]] = Trim(located, days);
+                }
             }
         }
 
         return result.ToDictionary(kv => kv.Key, kv => (IReadOnlyList<ForecastDaily>)kv.Value, StringComparer.Ordinal);
+    }
+
+    /// <summary>
+    /// Ground elevation from Open-Meteo's elevation API (Copernicus DEM, 90 m), 100 points per
+    /// call. Elevations do not change, so each rounded point is asked for once per client.
+    /// </summary>
+    /// <param name="points">Locations, at least one.</param>
+    /// <param name="cancellationToken">Cancels the requests.</param>
+    /// <returns>Metres above sea level, one per point in the order given.</returns>
+    /// <exception cref="ArgumentException"><paramref name="points"/> is empty.</exception>
+    /// <exception cref="HttpRequestException">Open-Meteo answered with an error status; the message carries its reason.</exception>
+    /// <exception cref="JsonException">The response is not an elevation array of the right length.</exception>
+    public async Task<IReadOnlyList<double>> GetElevationAsync(IReadOnlyList<GeoPoint> points, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(points);
+        if (points.Count == 0)
+        {
+            throw new ArgumentException("At least one point is needed.", nameof(points));
+        }
+
+        static (long, long) Key(GeoPoint p) => ((long)Math.Round(p.Latitude * 1000), (long)Math.Round(p.Longitude * 1000));
+        var missing = points.Where(p => !_elevations.ContainsKey(Key(p))).DistinctBy(Key).ToArray();
+        foreach (var batch in missing.Chunk(MaxElevationPointsPerRequest))
+        {
+            var query = new StringBuilder()
+                .Append("latitude=").AppendJoin(',', batch.Select(p => Coordinate(p.Latitude)))
+                .Append("&longitude=").AppendJoin(',', batch.Select(p => Coordinate(p.Longitude)));
+            AppendApiKey(query);
+            var (body, _) = await GetAsync(new Uri(_options.BaseAddress, $"v1/elevation?{query}"), cancellationToken).ConfigureAwait(false);
+            var elevations = ReadElevations(body);
+            CheckCount(elevations.Count, batch.Length);
+            for (var i = 0; i < batch.Length; i++)
+            {
+                _elevations[Key(batch[i])] = elevations[i];
+            }
+        }
+
+        return [.. points.Select(p => _elevations[Key(p)])];
     }
 
     internal Uri BuildUri(Uri baseAddress, string path, IReadOnlyCollection<GeoPoint> points, IReadOnlyList<string> models, IReadOnlyList<string> variables, int days)
@@ -115,12 +190,50 @@ public sealed class OpenMeteoClient
             .Append("&forecast_days=").Append(days.ToString(CultureInfo.InvariantCulture))
             .Append("&timezone=").Append(Uri.EscapeDataString(_options.TimeZone))
             .Append("&wind_speed_unit=kmh");
+        AppendApiKey(query);
+        return new Uri(baseAddress, $"{path}?{query}");
+    }
+
+    private void AppendApiKey(StringBuilder query)
+    {
         if (!string.IsNullOrEmpty(_options.ApiKey))
         {
             query.Append("&apikey=").Append(Uri.EscapeDataString(_options.ApiKey));
         }
+    }
 
-        return new Uri(baseAddress, $"{path}?{query}");
+    private static EnsembleDaily Trim(EnsembleDaily daily, int days) =>
+        daily.Days.Count == days ? daily : daily with { Days = [.. daily.Days.Take(days)], Members = [.. daily.Members.Take(days)] };
+
+    private static ForecastDaily Trim(ForecastDaily daily, int days) =>
+        daily.Days.Count == days
+            ? daily
+            : daily with
+            {
+                Days = [.. daily.Days.Take(days)],
+                Variables = daily.Variables.ToDictionary(kv => kv.Key, kv => (IReadOnlyList<double?>)[.. kv.Value.Take(days)], StringComparer.Ordinal),
+            };
+
+    // Each location's offset from UTC, so a cached day can be matched to the local calendar.
+    private static List<TimeSpan> UtcOffsets(byte[] body)
+    {
+        using var document = JsonDocument.Parse(body);
+        var root = document.RootElement;
+        var locations = root.ValueKind == JsonValueKind.Array ? [.. root.EnumerateArray()] : new[] { root };
+        return [.. locations.Select(l => l.TryGetProperty("utc_offset_seconds", out var s) && s.TryGetInt32(out var seconds) ? TimeSpan.FromSeconds(seconds) : TimeSpan.Zero)];
+    }
+
+    private static List<double> ReadElevations(byte[] body)
+    {
+        using var document = JsonDocument.Parse(body);
+        if (document.RootElement.ValueKind != JsonValueKind.Object
+            || !document.RootElement.TryGetProperty("elevation", out var array)
+            || array.ValueKind != JsonValueKind.Array)
+        {
+            throw new JsonException("No elevation array: not an elevation response.");
+        }
+
+        return [.. array.EnumerateArray().Select(e => e.GetDouble())];
     }
 
     // Invariant, always: under ne-NP or de-DE, 27.5 can format as "27,5" and move the point.

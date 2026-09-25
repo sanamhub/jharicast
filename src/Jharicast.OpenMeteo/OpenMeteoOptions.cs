@@ -21,6 +21,23 @@ public sealed class OpenMeteoOptions
     /// <summary>IANA time zone for daily values. Default <c>Asia/Kathmandu</c>, so a day is a Nepal day (ADR-0004).</summary>
     public string TimeZone { get; init; } = "Asia/Kathmandu";
 
+    /// <summary>
+    /// How long after its run time a model run appears on Open-Meteo. ECMWF, GFS and ICON run every
+    /// 6 h and appear about 6 to 8 h later; results are kept until the next run is due by this
+    /// reckoning. Default 7 hours.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Negative, or 24 hours or more.</exception>
+    public TimeSpan ModelRunLag
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, TimeSpan.Zero);
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(value, TimeSpan.FromHours(24));
+            field = value;
+        }
+    } = TimeSpan.FromHours(7);
+
     /// <summary>Clock for <see cref="Provenance.FetchedAt"/>. Default <see cref="System.TimeProvider.System"/>.</summary>
     public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
 }

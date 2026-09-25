@@ -34,6 +34,7 @@ Jharicast.OpenMeteo.ForecastDaily.Variables.get -> System.Collections.Generic.IR
 Jharicast.OpenMeteo.ForecastDaily.Variables.init -> void
 Jharicast.OpenMeteo.OpenMeteoClient
 Jharicast.OpenMeteo.OpenMeteoClient.GetDailyAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! points, System.Collections.Generic.IReadOnlyList<string!>! models, System.Collections.Generic.IReadOnlyList<string!>! variables, int days, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<Jharicast.OpenMeteo.ForecastDaily!>!>!>!
+Jharicast.OpenMeteo.OpenMeteoClient.GetElevationAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! points, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<double>!>!
 Jharicast.OpenMeteo.OpenMeteoClient.GetEnsembleDailyAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! points, string! model, System.Collections.Generic.IReadOnlyList<string!>! variables, int days, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<Jharicast.OpenMeteo.EnsembleDaily!>!>!>!
 Jharicast.OpenMeteo.OpenMeteoClient.OpenMeteoClient(System.Net.Http.HttpClient! httpClient, Jharicast.OpenMeteo.OpenMeteoOptions! options) -> void
 Jharicast.OpenMeteo.OpenMeteoOptions
@@ -43,6 +44,8 @@ Jharicast.OpenMeteo.OpenMeteoOptions.BaseAddress.get -> System.Uri!
 Jharicast.OpenMeteo.OpenMeteoOptions.BaseAddress.init -> void
 Jharicast.OpenMeteo.OpenMeteoOptions.EnsembleBaseAddress.get -> System.Uri!
 Jharicast.OpenMeteo.OpenMeteoOptions.EnsembleBaseAddress.init -> void
+Jharicast.OpenMeteo.OpenMeteoOptions.ModelRunLag.get -> System.TimeSpan
+Jharicast.OpenMeteo.OpenMeteoOptions.ModelRunLag.init -> void
 Jharicast.OpenMeteo.OpenMeteoOptions.OpenMeteoOptions() -> void
 Jharicast.OpenMeteo.OpenMeteoOptions.TimeProvider.get -> System.TimeProvider!
 Jharicast.OpenMeteo.OpenMeteoOptions.TimeProvider.init -> void

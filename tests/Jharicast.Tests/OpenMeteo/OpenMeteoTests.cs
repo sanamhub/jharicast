@@ -189,9 +189,9 @@ public sealed class OpenMeteoClientTests
 
     private static byte[] Fixture(string name) => File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", name));
 
-    private static byte[] EnsembleJson(int locations)
+    internal static byte[] EnsembleJson(int locations)
     {
-        var one = """{"latitude":27.5,"longitude":83.25,"daily":{"time":["2026-09-25"],"wind_gusts_10m_max":[30.0],"wind_gusts_10m_max_member01":[40.0]}}""";
+        var one = """{"latitude":27.5,"longitude":83.25,"daily":{"time":["2026-09-25"],"precipitation_sum":[3.0],"precipitation_sum_member01":[4.0],"wind_gusts_10m_max":[30.0],"wind_gusts_10m_max_member01":[40.0]}}""";
         return Encoding.UTF8.GetBytes("[" + string.Join(',', Enumerable.Repeat(one, locations)) + "]");
     }
 
