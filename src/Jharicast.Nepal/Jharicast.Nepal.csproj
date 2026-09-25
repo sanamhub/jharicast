@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Not published to nuget.org until DHM, DoR and BIPAD answer the permission request, or the
+       maintainer records a decision (ADR-0007, ADR-0014). release.yml holds it back. -->
+  <PropertyGroup>
+    <RootNamespace>Jharicast.Nepal</RootNamespace>
+    <Description>Nepal pack for Jharicast: the 77 districts with every spelling seen in official sources, towns, and parsers for DHM, BIPAD and DoR feeds. Data belongs to those agencies.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Jharicast/Jharicast.csproj" />
+  </ItemGroup>
+</Project>
