@@ -21,6 +21,9 @@ public sealed class ReportGoldenTests
                 : p90 + ((q - 0.9) / 0.1 * 0.3 * p90));
         })];
 
+    // Section 4.2, "point that set each of our orange/red levels": one row per line of that table
+    // (13). The expected level is the report's own level for that province and day. The table
+    // names the point that set the province's level, so the point is what is tested.
     [Theory]
     [InlineData("Tansen 25 Sep", 101, 141, AlertLevel.Red)]
     [InlineData("Janakpur 24 Sep", 59, 81, AlertLevel.Orange)]
@@ -28,6 +31,13 @@ public sealed class ReportGoldenTests
     [InlineData("Nepalgunj 26 Sep", 66, 126, AlertLevel.Orange)]
     [InlineData("Dhangadhi 26 Sep", 80, 151, AlertLevel.Orange)]
     [InlineData("Dhangadhi 27 Sep", 40, 102, AlertLevel.Yellow)]
+    [InlineData("Khandbari 25 Sep", 53, 84, AlertLevel.Orange)]
+    [InlineData("Hetauda 24 Sep", 57, 78, AlertLevel.Orange)]
+    [InlineData("Kathmandu 25 Sep", 53, 89, AlertLevel.Orange)]
+    [InlineData("Pokhara 25 Sep", 78, 112, AlertLevel.Orange)]
+    [InlineData("Beni 26 Sep", 57, 93, AlertLevel.Orange)]
+    [InlineData("Surkhet 25 Sep", 65, 108, AlertLevel.Orange)]
+    [InlineData("Surkhet 26 Sep", 51, 85, AlertLevel.Orange)]
     public void Rain_rule_reproduces_the_reports_own_levels(string point, double median, double p90, AlertLevel expected)
     {
         var members = Members(median, p90);
@@ -84,6 +94,46 @@ public sealed class ReportGoldenTests
         Assert.Equal(RuleStatus.Watch, assessment.Status);
         Assert.Equal(RuleStatus.Watch, assessment.Results.Single(r => r.RuleId == "jharicast.gust.v1").Status);
         Assert.Equal(RuleStatus.Pass, assessment.Results.Single(r => r.RuleId == "jharicast.hill-rain.v1").Status);
+    }
+
+    // Section 7.3, D2: a stay in Lumbini has no hill km, so the hill-rain rule has no points to
+    // sample and ICON's 91 mm on the plain does not count. The row's flag is wind only.
+    [Fact]
+    public void Stay_in_Lumbini_27_Sep_breaks_the_wind_rule_only()
+    {
+        var day = new LegDayInput(
+            "D2",
+            new DateOnly(2026, 9, 27),
+            new Dictionary<string, AlertLevel>(),
+            RoadBlocked: false,
+            HillRain: new ModelSample(new Dictionary<string, double>(), []),
+            Gust: Sample(52, 44, 27));
+
+        var assessment = RouteRuleSet.V1.Evaluate(day);
+
+        Assert.Equal(RuleStatus.Breach, assessment.Status);
+        var gust = assessment.Results.Single(r => r.RuleId == "jharicast.gust.v1");
+        Assert.Equal(RuleStatus.Breach, gust.Status);
+        Assert.Equal("ecmwf 52 over 40", gust.Reason);
+        Assert.All(assessment.Results.Where(r => r.RuleId != "jharicast.gust.v1"), r => Assert.Equal(RuleStatus.Pass, r.Status));
+    }
+
+    // Section 7.3, D3: ECMWF's 55 km/h breaches on its own; the report adds 74% of members over
+    // 40 km/h near Lamahi, synthesised here as 37 of 50.
+    [Fact]
+    public void Lumbini_to_Nepalgunj_28_Sep_breaks_the_wind_rule_only()
+    {
+        double?[] members = [.. Enumerable.Range(0, 50).Select(i => (double?)(i < 37 ? 46 : 33))];
+        var day = new LegDayInput("D3", new DateOnly(2026, 9, 28), new Dictionary<string, AlertLevel>(), false, Sample(12, 14, 2), Sample(55, 38, 27, members));
+
+        var assessment = RouteRuleSet.V1.Evaluate(day);
+
+        Assert.Equal(RuleStatus.Breach, assessment.Status);
+        var gust = assessment.Results.Single(r => r.RuleId == "jharicast.gust.v1");
+        Assert.Equal(RuleStatus.Breach, gust.Status);
+        Assert.Equal("ecmwf 55 over 40", gust.Reason);
+        Assert.Equal(0.74, EnsembleStats.Exceedance(members, 40), 10);
+        Assert.All(assessment.Results.Where(r => r.RuleId != "jharicast.gust.v1"), r => Assert.Equal(RuleStatus.Pass, r.Status));
     }
 
     [Fact]
