@@ -3,6 +3,22 @@ Jharicast.Nepal.Belt
 Jharicast.Nepal.Belt.Hill = 1 -> Jharicast.Nepal.Belt
 Jharicast.Nepal.Belt.Mountain = 0 -> Jharicast.Nepal.Belt
 Jharicast.Nepal.Belt.Terai = 2 -> Jharicast.Nepal.Belt
+Jharicast.Nepal.DhmWarningSnapshot
+Jharicast.Nepal.DhmWarningSnapshot.<Clone>$() -> Jharicast.Nepal.DhmWarningSnapshot!
+Jharicast.Nepal.DhmWarningSnapshot.Deconstruct(out System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.DistrictWarning!>! Warnings, out System.Collections.Generic.IReadOnlyList<string!>! Drift, out Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.DhmWarningSnapshot.DhmWarningSnapshot(System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.DistrictWarning!>! Warnings, System.Collections.Generic.IReadOnlyList<string!>! Drift, Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.DhmWarningSnapshot.Drift.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Jharicast.Nepal.DhmWarningSnapshot.Drift.init -> void
+Jharicast.Nepal.DhmWarningSnapshot.Equals(Jharicast.Nepal.DhmWarningSnapshot? other) -> bool
+Jharicast.Nepal.DhmWarningSnapshot.LevelFor(Jharicast.Nepal.District! district, Jharicast.Nepal.Hazard? hazard = null) -> Jharicast.AlertLevel
+Jharicast.Nepal.DhmWarningSnapshot.Provenance.get -> Jharicast.Provenance!
+Jharicast.Nepal.DhmWarningSnapshot.Provenance.init -> void
+Jharicast.Nepal.DhmWarningSnapshot.Warnings.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.DistrictWarning!>!
+Jharicast.Nepal.DhmWarningSnapshot.Warnings.init -> void
+Jharicast.Nepal.DhmWarningsParser
+Jharicast.Nepal.DhmWarningsSource
+Jharicast.Nepal.DhmWarningsSource.DhmWarningsSource(System.Net.Http.HttpClient! httpClient, Jharicast.Fetch.ISnapshotStore! store, System.TimeProvider! timeProvider, System.Uri? url = null) -> void
+Jharicast.Nepal.DhmWarningsSource.FetchAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Fetch.SourceResult<Jharicast.Nepal.DhmWarningSnapshot!>!>!
 Jharicast.Nepal.District
 Jharicast.Nepal.District.<Clone>$() -> Jharicast.Nepal.District!
 Jharicast.Nepal.District.Aliases.get -> System.Collections.Generic.IReadOnlyList<string!>!
@@ -20,7 +36,29 @@ Jharicast.Nepal.District.NameNe.get -> string!
 Jharicast.Nepal.District.NameNe.init -> void
 Jharicast.Nepal.District.Province.get -> Jharicast.Nepal.Province
 Jharicast.Nepal.District.Province.init -> void
+Jharicast.Nepal.DistrictWarning
+Jharicast.Nepal.DistrictWarning.<Clone>$() -> Jharicast.Nepal.DistrictWarning!
+Jharicast.Nepal.DistrictWarning.Deconstruct(out Jharicast.Nepal.District! District, out Jharicast.Nepal.Hazard Hazard, out Jharicast.AlertLevel Level) -> void
+Jharicast.Nepal.DistrictWarning.District.get -> Jharicast.Nepal.District!
+Jharicast.Nepal.DistrictWarning.District.init -> void
+Jharicast.Nepal.DistrictWarning.DistrictWarning(Jharicast.Nepal.District! District, Jharicast.Nepal.Hazard Hazard, Jharicast.AlertLevel Level) -> void
+Jharicast.Nepal.DistrictWarning.Equals(Jharicast.Nepal.DistrictWarning? other) -> bool
+Jharicast.Nepal.DistrictWarning.Hazard.get -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.DistrictWarning.Hazard.init -> void
+Jharicast.Nepal.DistrictWarning.Level.get -> Jharicast.AlertLevel
+Jharicast.Nepal.DistrictWarning.Level.init -> void
 Jharicast.Nepal.Gazetteer
+Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.Avalanche = 7 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.ColdWeather = 6 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.ForestFire = 8 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.HeatWave = 5 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.Landslide = 4 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.Rainfall = 0 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.SnowFall = 3 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.ThunderStorm = 2 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.Tornado = 9 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.Hazard.WindGust = 1 -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Bagmati = 3 -> Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Gandaki = 4 -> Jharicast.Nepal.Province
@@ -29,13 +67,6 @@ Jharicast.Nepal.Province.Koshi = 1 -> Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Lumbini = 5 -> Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Madhesh = 2 -> Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Sudurpashchim = 7 -> Jharicast.Nepal.Province
-override Jharicast.Nepal.District.Equals(object? obj) -> bool
-override Jharicast.Nepal.District.GetHashCode() -> int
-override Jharicast.Nepal.District.ToString() -> string!
-static Jharicast.Nepal.District.operator !=(Jharicast.Nepal.District? left, Jharicast.Nepal.District? right) -> bool
-static Jharicast.Nepal.District.operator ==(Jharicast.Nepal.District? left, Jharicast.Nepal.District? right) -> bool
-static Jharicast.Nepal.Gazetteer.Districts.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.District!>!
-static Jharicast.Nepal.Gazetteer.TryResolve(string? name, out Jharicast.Nepal.District! district) -> bool
 Jharicast.Nepal.Town
 Jharicast.Nepal.Town.<Clone>$() -> Jharicast.Nepal.Town!
 Jharicast.Nepal.Town.Aliases.get -> System.Collections.Generic.IReadOnlyList<string!>!
@@ -51,9 +82,29 @@ Jharicast.Nepal.Town.Location.init -> void
 Jharicast.Nepal.Town.Name.get -> string!
 Jharicast.Nepal.Town.Name.init -> void
 Jharicast.Nepal.Town.Town(string! Name, string! DistrictId, Jharicast.GeoPoint Location, bool IsHeadquarters, System.Collections.Generic.IReadOnlyList<string!>! Aliases) -> void
+const Jharicast.Nepal.DhmWarningsParser.SourceId = "dhm.warnings" -> string!
+override Jharicast.Nepal.DhmWarningSnapshot.Equals(object? obj) -> bool
+override Jharicast.Nepal.DhmWarningSnapshot.GetHashCode() -> int
+override Jharicast.Nepal.DhmWarningSnapshot.ToString() -> string!
+override Jharicast.Nepal.District.Equals(object? obj) -> bool
+override Jharicast.Nepal.District.GetHashCode() -> int
+override Jharicast.Nepal.District.ToString() -> string!
+override Jharicast.Nepal.DistrictWarning.Equals(object? obj) -> bool
+override Jharicast.Nepal.DistrictWarning.GetHashCode() -> int
+override Jharicast.Nepal.DistrictWarning.ToString() -> string!
 override Jharicast.Nepal.Town.Equals(object? obj) -> bool
 override Jharicast.Nepal.Town.GetHashCode() -> int
 override Jharicast.Nepal.Town.ToString() -> string!
+static Jharicast.Nepal.DhmWarningSnapshot.operator !=(Jharicast.Nepal.DhmWarningSnapshot? left, Jharicast.Nepal.DhmWarningSnapshot? right) -> bool
+static Jharicast.Nepal.DhmWarningSnapshot.operator ==(Jharicast.Nepal.DhmWarningSnapshot? left, Jharicast.Nepal.DhmWarningSnapshot? right) -> bool
+static Jharicast.Nepal.DhmWarningsParser.Parse(System.ReadOnlyMemory<byte> utf8Json, System.DateTimeOffset fetchedAt) -> Jharicast.Nepal.DhmWarningSnapshot!
+static Jharicast.Nepal.District.operator !=(Jharicast.Nepal.District? left, Jharicast.Nepal.District? right) -> bool
+static Jharicast.Nepal.District.operator ==(Jharicast.Nepal.District? left, Jharicast.Nepal.District? right) -> bool
+static Jharicast.Nepal.DistrictWarning.operator !=(Jharicast.Nepal.DistrictWarning? left, Jharicast.Nepal.DistrictWarning? right) -> bool
+static Jharicast.Nepal.DistrictWarning.operator ==(Jharicast.Nepal.DistrictWarning? left, Jharicast.Nepal.DistrictWarning? right) -> bool
+static Jharicast.Nepal.Gazetteer.Districts.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.District!>!
 static Jharicast.Nepal.Gazetteer.Towns.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.Town!>!
+static Jharicast.Nepal.Gazetteer.TryResolve(string? name, out Jharicast.Nepal.District! district) -> bool
 static Jharicast.Nepal.Town.operator !=(Jharicast.Nepal.Town? left, Jharicast.Nepal.Town? right) -> bool
 static Jharicast.Nepal.Town.operator ==(Jharicast.Nepal.Town? left, Jharicast.Nepal.Town? right) -> bool
+static readonly Jharicast.Nepal.DhmWarningsSource.DefaultUrl -> System.Uri!

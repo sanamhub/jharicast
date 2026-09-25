@@ -7,5 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Jharicast/Jharicast.csproj" />
+    <ProjectReference Include="../Jharicast.Fetch/Jharicast.Fetch.csproj" />
   </ItemGroup>
 </Project>
