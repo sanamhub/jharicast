@@ -33,11 +33,18 @@ internal sealed class SourceFetcher(HttpClient http, ISnapshotStore store, TimeP
         where T : class
     {
         var (fetched, failure) = await GetAsync(request.Url, cancellationToken).ConfigureAwait(false);
-        if (fetched is null)
-        {
-            return new SourceResult<T>(null, null, failure!);
-        }
+        return fetched is null
+            ? new SourceResult<T>(null, null, failure!)
+            : await CompleteAsync(request, fetched, cancellationToken).ConfigureAwait(false);
+    }
 
+    /// <summary>Scrubs, stores and parses a body already fetched, for sources that page.</summary>
+    /// <param name="request">How to read it; <see cref="SourceRequest{T}.Url"/> names the snapshot.</param>
+    /// <param name="fetched">The body and response details.</param>
+    /// <param name="cancellationToken">Cancels the store calls.</param>
+    public async Task<SourceResult<T>> CompleteAsync<T>(SourceRequest<T> request, Fetched fetched, CancellationToken cancellationToken)
+        where T : class
+    {
         Snapshot snapshot;
         try
         {

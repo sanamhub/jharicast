@@ -1,0 +1,32 @@
+[
+  {
+    "road_refno": "H01",
+    "link_code": "H0104",
+    "closure_type": "Full",
+    "closure_reason": "Landslide",
+    "latitude": "27.1900",
+    "longitude": "84.9800",
+    "start_time": "2026-09-26 06:30:00",
+    "estimated_end_time": "2026-09-27 18:00:00",
+    "end_time": null,
+    "contact_person": "Example Person",
+    "contact_number": "0000000000",
+    "mobile_no": "0000000001",
+    "phone": "000-000000"
+  },
+  {
+    "road_refno": "H10",
+    "link_code": "H1002",
+    "closure_type": "One lane",
+    "closure_reason": "Road washed out",
+    "latitude": 28.0900,
+    "longitude": 81.7000,
+    "start_time": "2026-09-25 22:00:00",
+    "estimated_end_time": null,
+    "end_time": "2026-09-26 09:15:00",
+    "contact_person": "Another Example",
+    "contact_number": "0000000002",
+    "mobile_no": "0000000003",
+    "phone": "000-000001"
+  }
+]

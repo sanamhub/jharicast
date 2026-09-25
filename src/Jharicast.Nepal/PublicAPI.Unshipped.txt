@@ -3,6 +3,81 @@ Jharicast.Nepal.Belt
 Jharicast.Nepal.Belt.Hill = 1 -> Jharicast.Nepal.Belt
 Jharicast.Nepal.Belt.Mountain = 0 -> Jharicast.Nepal.Belt
 Jharicast.Nepal.Belt.Terai = 2 -> Jharicast.Nepal.Belt
+Jharicast.Nepal.BipadAlert
+Jharicast.Nepal.BipadAlert.<Clone>$() -> Jharicast.Nepal.BipadAlert!
+Jharicast.Nepal.BipadAlert.BipadAlert(int Id, string! Title, Jharicast.Nepal.District? District, int? HazardId, string? ReferenceType, Jharicast.GeoPoint? Location, System.DateTimeOffset? StartedAt, System.DateTimeOffset? ExpiresAt, bool Verified) -> void
+Jharicast.Nepal.BipadAlert.Deconstruct(out int Id, out string! Title, out Jharicast.Nepal.District? District, out int? HazardId, out string? ReferenceType, out Jharicast.GeoPoint? Location, out System.DateTimeOffset? StartedAt, out System.DateTimeOffset? ExpiresAt, out bool Verified) -> void
+Jharicast.Nepal.BipadAlert.District.get -> Jharicast.Nepal.District?
+Jharicast.Nepal.BipadAlert.District.init -> void
+Jharicast.Nepal.BipadAlert.Equals(Jharicast.Nepal.BipadAlert? other) -> bool
+Jharicast.Nepal.BipadAlert.ExpiresAt.get -> System.DateTimeOffset?
+Jharicast.Nepal.BipadAlert.ExpiresAt.init -> void
+Jharicast.Nepal.BipadAlert.HazardId.get -> int?
+Jharicast.Nepal.BipadAlert.HazardId.init -> void
+Jharicast.Nepal.BipadAlert.Id.get -> int
+Jharicast.Nepal.BipadAlert.Id.init -> void
+Jharicast.Nepal.BipadAlert.Location.get -> Jharicast.GeoPoint?
+Jharicast.Nepal.BipadAlert.Location.init -> void
+Jharicast.Nepal.BipadAlert.ReferenceType.get -> string?
+Jharicast.Nepal.BipadAlert.ReferenceType.init -> void
+Jharicast.Nepal.BipadAlert.StartedAt.get -> System.DateTimeOffset?
+Jharicast.Nepal.BipadAlert.StartedAt.init -> void
+Jharicast.Nepal.BipadAlert.Title.get -> string!
+Jharicast.Nepal.BipadAlert.Title.init -> void
+Jharicast.Nepal.BipadAlert.Verified.get -> bool
+Jharicast.Nepal.BipadAlert.Verified.init -> void
+Jharicast.Nepal.BipadAlertSnapshot
+Jharicast.Nepal.BipadAlertSnapshot.<Clone>$() -> Jharicast.Nepal.BipadAlertSnapshot!
+Jharicast.Nepal.BipadAlertSnapshot.ActiveAt(System.DateTimeOffset now) -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.BipadAlert!>!
+Jharicast.Nepal.BipadAlertSnapshot.Alerts.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.BipadAlert!>!
+Jharicast.Nepal.BipadAlertSnapshot.Alerts.init -> void
+Jharicast.Nepal.BipadAlertSnapshot.BipadAlertSnapshot(System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.BipadAlert!>! Alerts, System.Collections.Generic.IReadOnlyList<string!>! Drift, Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.BipadAlertSnapshot.Deconstruct(out System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.BipadAlert!>! Alerts, out System.Collections.Generic.IReadOnlyList<string!>! Drift, out Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.BipadAlertSnapshot.Drift.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Jharicast.Nepal.BipadAlertSnapshot.Drift.init -> void
+Jharicast.Nepal.BipadAlertSnapshot.Equals(Jharicast.Nepal.BipadAlertSnapshot? other) -> bool
+Jharicast.Nepal.BipadAlertSnapshot.Provenance.get -> Jharicast.Provenance!
+Jharicast.Nepal.BipadAlertSnapshot.Provenance.init -> void
+Jharicast.Nepal.BipadAlertSource
+Jharicast.Nepal.BipadAlertSource.BipadAlertSource(System.Net.Http.HttpClient! httpClient, Jharicast.Fetch.ISnapshotStore! store, System.TimeProvider! timeProvider, System.Uri? baseAddress = null) -> void
+Jharicast.Nepal.BipadAlertSource.FetchAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Fetch.SourceResult<Jharicast.Nepal.BipadAlertSnapshot!>!>!
+Jharicast.Nepal.BipadAlertSource.MaxPages.get -> int
+Jharicast.Nepal.BipadAlertSource.MaxPages.init -> void
+Jharicast.Nepal.BipadIncident
+Jharicast.Nepal.BipadIncident.<Clone>$() -> Jharicast.Nepal.BipadIncident!
+Jharicast.Nepal.BipadIncident.BipadIncident(int Id, string! Title, int? HazardId, Jharicast.GeoPoint? Location, System.DateTimeOffset? OccurredAt, System.DateTimeOffset? ReportedAt, bool Verified) -> void
+Jharicast.Nepal.BipadIncident.Deconstruct(out int Id, out string! Title, out int? HazardId, out Jharicast.GeoPoint? Location, out System.DateTimeOffset? OccurredAt, out System.DateTimeOffset? ReportedAt, out bool Verified) -> void
+Jharicast.Nepal.BipadIncident.Equals(Jharicast.Nepal.BipadIncident? other) -> bool
+Jharicast.Nepal.BipadIncident.HazardId.get -> int?
+Jharicast.Nepal.BipadIncident.HazardId.init -> void
+Jharicast.Nepal.BipadIncident.Id.get -> int
+Jharicast.Nepal.BipadIncident.Id.init -> void
+Jharicast.Nepal.BipadIncident.Location.get -> Jharicast.GeoPoint?
+Jharicast.Nepal.BipadIncident.Location.init -> void
+Jharicast.Nepal.BipadIncident.OccurredAt.get -> System.DateTimeOffset?
+Jharicast.Nepal.BipadIncident.OccurredAt.init -> void
+Jharicast.Nepal.BipadIncident.ReportedAt.get -> System.DateTimeOffset?
+Jharicast.Nepal.BipadIncident.ReportedAt.init -> void
+Jharicast.Nepal.BipadIncident.Title.get -> string!
+Jharicast.Nepal.BipadIncident.Title.init -> void
+Jharicast.Nepal.BipadIncident.Verified.get -> bool
+Jharicast.Nepal.BipadIncident.Verified.init -> void
+Jharicast.Nepal.BipadIncidentSnapshot
+Jharicast.Nepal.BipadIncidentSnapshot.<Clone>$() -> Jharicast.Nepal.BipadIncidentSnapshot!
+Jharicast.Nepal.BipadIncidentSnapshot.BipadIncidentSnapshot(System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.BipadIncident!>! Incidents, System.Collections.Generic.IReadOnlyList<string!>! Drift, Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.BipadIncidentSnapshot.Deconstruct(out System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.BipadIncident!>! Incidents, out System.Collections.Generic.IReadOnlyList<string!>! Drift, out Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.BipadIncidentSnapshot.Drift.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Jharicast.Nepal.BipadIncidentSnapshot.Drift.init -> void
+Jharicast.Nepal.BipadIncidentSnapshot.Equals(Jharicast.Nepal.BipadIncidentSnapshot? other) -> bool
+Jharicast.Nepal.BipadIncidentSnapshot.Incidents.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.BipadIncident!>!
+Jharicast.Nepal.BipadIncidentSnapshot.Incidents.init -> void
+Jharicast.Nepal.BipadIncidentSnapshot.Provenance.get -> Jharicast.Provenance!
+Jharicast.Nepal.BipadIncidentSnapshot.Provenance.init -> void
+Jharicast.Nepal.BipadIncidentSource
+Jharicast.Nepal.BipadIncidentSource.BipadIncidentSource(System.Net.Http.HttpClient! httpClient, Jharicast.Fetch.ISnapshotStore! store, System.TimeProvider! timeProvider, System.Uri? baseAddress = null) -> void
+Jharicast.Nepal.BipadIncidentSource.FetchAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Fetch.SourceResult<Jharicast.Nepal.BipadIncidentSnapshot!>!>!
+Jharicast.Nepal.BipadIncidentSource.MaxPages.get -> int
+Jharicast.Nepal.BipadIncidentSource.MaxPages.init -> void
 Jharicast.Nepal.DhmBulletin
 Jharicast.Nepal.DhmBulletin.<Clone>$() -> Jharicast.Nepal.DhmBulletin!
 Jharicast.Nepal.DhmBulletin.Analysis.get -> string?
@@ -87,6 +162,21 @@ Jharicast.Nepal.DistrictWarning.Hazard.get -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.DistrictWarning.Hazard.init -> void
 Jharicast.Nepal.DistrictWarning.Level.get -> Jharicast.AlertLevel
 Jharicast.Nepal.DistrictWarning.Level.init -> void
+Jharicast.Nepal.DorClosureSnapshot
+Jharicast.Nepal.DorClosureSnapshot.<Clone>$() -> Jharicast.Nepal.DorClosureSnapshot!
+Jharicast.Nepal.DorClosureSnapshot.ActiveAt(System.DateTimeOffset now) -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.RoadClosure!>!
+Jharicast.Nepal.DorClosureSnapshot.Closures.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.RoadClosure!>!
+Jharicast.Nepal.DorClosureSnapshot.Closures.init -> void
+Jharicast.Nepal.DorClosureSnapshot.Deconstruct(out System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.RoadClosure!>! Closures, out System.Collections.Generic.IReadOnlyList<string!>! Drift, out Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.DorClosureSnapshot.DorClosureSnapshot(System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.RoadClosure!>! Closures, System.Collections.Generic.IReadOnlyList<string!>! Drift, Jharicast.Provenance! Provenance) -> void
+Jharicast.Nepal.DorClosureSnapshot.Drift.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Jharicast.Nepal.DorClosureSnapshot.Drift.init -> void
+Jharicast.Nepal.DorClosureSnapshot.Equals(Jharicast.Nepal.DorClosureSnapshot? other) -> bool
+Jharicast.Nepal.DorClosureSnapshot.Provenance.get -> Jharicast.Provenance!
+Jharicast.Nepal.DorClosureSnapshot.Provenance.init -> void
+Jharicast.Nepal.DorClosureSource
+Jharicast.Nepal.DorClosureSource.DorClosureSource(System.Net.Http.HttpClient! httpClient, Jharicast.Fetch.ISnapshotStore! store, System.TimeProvider! timeProvider, System.Uri? url = null) -> void
+Jharicast.Nepal.DorClosureSource.FetchAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Fetch.SourceResult<Jharicast.Nepal.DorClosureSnapshot!>!>!
 Jharicast.Nepal.GaugeStatus
 Jharicast.Nepal.GaugeStatus.BelowWarning = 1 -> Jharicast.Nepal.GaugeStatus
 Jharicast.Nepal.GaugeStatus.Danger = 3 -> Jharicast.Nepal.GaugeStatus
@@ -104,6 +194,7 @@ Jharicast.Nepal.Hazard.SnowFall = 3 -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.Hazard.ThunderStorm = 2 -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.Hazard.Tornado = 9 -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.Hazard.WindGust = 1 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.NepalTime
 Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Bagmati = 3 -> Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Gandaki = 4 -> Jharicast.Nepal.Province
@@ -180,6 +271,27 @@ Jharicast.Nepal.RiverTrend.Falling = 3 -> Jharicast.Nepal.RiverTrend
 Jharicast.Nepal.RiverTrend.Rising = 2 -> Jharicast.Nepal.RiverTrend
 Jharicast.Nepal.RiverTrend.Steady = 1 -> Jharicast.Nepal.RiverTrend
 Jharicast.Nepal.RiverTrend.Unknown = 0 -> Jharicast.Nepal.RiverTrend
+Jharicast.Nepal.RoadClosure
+Jharicast.Nepal.RoadClosure.<Clone>$() -> Jharicast.Nepal.RoadClosure!
+Jharicast.Nepal.RoadClosure.ClosureType.get -> string?
+Jharicast.Nepal.RoadClosure.ClosureType.init -> void
+Jharicast.Nepal.RoadClosure.Deconstruct(out string? RoadRefNo, out string? LinkCode, out string? ClosureType, out string? Reason, out Jharicast.GeoPoint? Location, out System.DateTimeOffset? StartsAt, out System.DateTimeOffset? ExpectedEndAt, out System.DateTimeOffset? EndedAt) -> void
+Jharicast.Nepal.RoadClosure.EndedAt.get -> System.DateTimeOffset?
+Jharicast.Nepal.RoadClosure.EndedAt.init -> void
+Jharicast.Nepal.RoadClosure.Equals(Jharicast.Nepal.RoadClosure? other) -> bool
+Jharicast.Nepal.RoadClosure.ExpectedEndAt.get -> System.DateTimeOffset?
+Jharicast.Nepal.RoadClosure.ExpectedEndAt.init -> void
+Jharicast.Nepal.RoadClosure.LinkCode.get -> string?
+Jharicast.Nepal.RoadClosure.LinkCode.init -> void
+Jharicast.Nepal.RoadClosure.Location.get -> Jharicast.GeoPoint?
+Jharicast.Nepal.RoadClosure.Location.init -> void
+Jharicast.Nepal.RoadClosure.Reason.get -> string?
+Jharicast.Nepal.RoadClosure.Reason.init -> void
+Jharicast.Nepal.RoadClosure.RoadClosure(string? RoadRefNo, string? LinkCode, string? ClosureType, string? Reason, Jharicast.GeoPoint? Location, System.DateTimeOffset? StartsAt, System.DateTimeOffset? ExpectedEndAt, System.DateTimeOffset? EndedAt) -> void
+Jharicast.Nepal.RoadClosure.RoadRefNo.get -> string?
+Jharicast.Nepal.RoadClosure.RoadRefNo.init -> void
+Jharicast.Nepal.RoadClosure.StartsAt.get -> System.DateTimeOffset?
+Jharicast.Nepal.RoadClosure.StartsAt.init -> void
 Jharicast.Nepal.Town
 Jharicast.Nepal.Town.<Clone>$() -> Jharicast.Nepal.Town!
 Jharicast.Nepal.Town.Aliases.get -> System.Collections.Generic.IReadOnlyList<string!>!
@@ -195,9 +307,24 @@ Jharicast.Nepal.Town.Location.init -> void
 Jharicast.Nepal.Town.Name.get -> string!
 Jharicast.Nepal.Town.Name.init -> void
 Jharicast.Nepal.Town.Town(string! Name, string! DistrictId, Jharicast.GeoPoint Location, bool IsHeadquarters, System.Collections.Generic.IReadOnlyList<string!>! Aliases) -> void
+const Jharicast.Nepal.BipadAlertSource.SourceId = "bipad.alerts" -> string!
+const Jharicast.Nepal.BipadIncidentSource.SourceId = "bipad.incidents" -> string!
 const Jharicast.Nepal.DhmBulletinSource.SourceId = "dhm.bulletin" -> string!
 const Jharicast.Nepal.DhmGaugeParser.SourceId = "dhm.gauges" -> string!
 const Jharicast.Nepal.DhmWarningsParser.SourceId = "dhm.warnings" -> string!
+const Jharicast.Nepal.DorClosureSource.SourceId = "dor.closures" -> string!
+override Jharicast.Nepal.BipadAlert.Equals(object? obj) -> bool
+override Jharicast.Nepal.BipadAlert.GetHashCode() -> int
+override Jharicast.Nepal.BipadAlert.ToString() -> string!
+override Jharicast.Nepal.BipadAlertSnapshot.Equals(object? obj) -> bool
+override Jharicast.Nepal.BipadAlertSnapshot.GetHashCode() -> int
+override Jharicast.Nepal.BipadAlertSnapshot.ToString() -> string!
+override Jharicast.Nepal.BipadIncident.Equals(object? obj) -> bool
+override Jharicast.Nepal.BipadIncident.GetHashCode() -> int
+override Jharicast.Nepal.BipadIncident.ToString() -> string!
+override Jharicast.Nepal.BipadIncidentSnapshot.Equals(object? obj) -> bool
+override Jharicast.Nepal.BipadIncidentSnapshot.GetHashCode() -> int
+override Jharicast.Nepal.BipadIncidentSnapshot.ToString() -> string!
 override Jharicast.Nepal.DhmBulletin.Equals(object? obj) -> bool
 override Jharicast.Nepal.DhmBulletin.GetHashCode() -> int
 override Jharicast.Nepal.DhmBulletin.ToString() -> string!
@@ -213,6 +340,9 @@ override Jharicast.Nepal.District.ToString() -> string!
 override Jharicast.Nepal.DistrictWarning.Equals(object? obj) -> bool
 override Jharicast.Nepal.DistrictWarning.GetHashCode() -> int
 override Jharicast.Nepal.DistrictWarning.ToString() -> string!
+override Jharicast.Nepal.DorClosureSnapshot.Equals(object? obj) -> bool
+override Jharicast.Nepal.DorClosureSnapshot.GetHashCode() -> int
+override Jharicast.Nepal.DorClosureSnapshot.ToString() -> string!
 override Jharicast.Nepal.RainStation.Equals(object? obj) -> bool
 override Jharicast.Nepal.RainStation.GetHashCode() -> int
 override Jharicast.Nepal.RainStation.ToString() -> string!
@@ -222,9 +352,20 @@ override Jharicast.Nepal.RainTotal.ToString() -> string!
 override Jharicast.Nepal.RiverStation.Equals(object? obj) -> bool
 override Jharicast.Nepal.RiverStation.GetHashCode() -> int
 override Jharicast.Nepal.RiverStation.ToString() -> string!
+override Jharicast.Nepal.RoadClosure.Equals(object? obj) -> bool
+override Jharicast.Nepal.RoadClosure.GetHashCode() -> int
+override Jharicast.Nepal.RoadClosure.ToString() -> string!
 override Jharicast.Nepal.Town.Equals(object? obj) -> bool
 override Jharicast.Nepal.Town.GetHashCode() -> int
 override Jharicast.Nepal.Town.ToString() -> string!
+static Jharicast.Nepal.BipadAlert.operator !=(Jharicast.Nepal.BipadAlert? left, Jharicast.Nepal.BipadAlert? right) -> bool
+static Jharicast.Nepal.BipadAlert.operator ==(Jharicast.Nepal.BipadAlert? left, Jharicast.Nepal.BipadAlert? right) -> bool
+static Jharicast.Nepal.BipadAlertSnapshot.operator !=(Jharicast.Nepal.BipadAlertSnapshot? left, Jharicast.Nepal.BipadAlertSnapshot? right) -> bool
+static Jharicast.Nepal.BipadAlertSnapshot.operator ==(Jharicast.Nepal.BipadAlertSnapshot? left, Jharicast.Nepal.BipadAlertSnapshot? right) -> bool
+static Jharicast.Nepal.BipadIncident.operator !=(Jharicast.Nepal.BipadIncident? left, Jharicast.Nepal.BipadIncident? right) -> bool
+static Jharicast.Nepal.BipadIncident.operator ==(Jharicast.Nepal.BipadIncident? left, Jharicast.Nepal.BipadIncident? right) -> bool
+static Jharicast.Nepal.BipadIncidentSnapshot.operator !=(Jharicast.Nepal.BipadIncidentSnapshot? left, Jharicast.Nepal.BipadIncidentSnapshot? right) -> bool
+static Jharicast.Nepal.BipadIncidentSnapshot.operator ==(Jharicast.Nepal.BipadIncidentSnapshot? left, Jharicast.Nepal.BipadIncidentSnapshot? right) -> bool
 static Jharicast.Nepal.DhmBulletin.operator !=(Jharicast.Nepal.DhmBulletin? left, Jharicast.Nepal.DhmBulletin? right) -> bool
 static Jharicast.Nepal.DhmBulletin.operator ==(Jharicast.Nepal.DhmBulletin? left, Jharicast.Nepal.DhmBulletin? right) -> bool
 static Jharicast.Nepal.DhmGaugeParser.Parse(System.ReadOnlyMemory<byte> utf8Json, System.DateTimeOffset fetchedAt) -> Jharicast.Nepal.DhmGaugeSnapshot!
@@ -237,16 +378,24 @@ static Jharicast.Nepal.District.operator !=(Jharicast.Nepal.District? left, Jhar
 static Jharicast.Nepal.District.operator ==(Jharicast.Nepal.District? left, Jharicast.Nepal.District? right) -> bool
 static Jharicast.Nepal.DistrictWarning.operator !=(Jharicast.Nepal.DistrictWarning? left, Jharicast.Nepal.DistrictWarning? right) -> bool
 static Jharicast.Nepal.DistrictWarning.operator ==(Jharicast.Nepal.DistrictWarning? left, Jharicast.Nepal.DistrictWarning? right) -> bool
+static Jharicast.Nepal.DorClosureSnapshot.operator !=(Jharicast.Nepal.DorClosureSnapshot? left, Jharicast.Nepal.DorClosureSnapshot? right) -> bool
+static Jharicast.Nepal.DorClosureSnapshot.operator ==(Jharicast.Nepal.DorClosureSnapshot? left, Jharicast.Nepal.DorClosureSnapshot? right) -> bool
 static Jharicast.Nepal.Gazetteer.Districts.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.District!>!
 static Jharicast.Nepal.Gazetteer.Towns.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.Town!>!
 static Jharicast.Nepal.Gazetteer.TryResolve(string? name, out Jharicast.Nepal.District! district) -> bool
+static Jharicast.Nepal.NepalTime.DateOf(System.DateTimeOffset instant) -> System.DateOnly
+static Jharicast.Nepal.NepalTime.ToUtc(System.DateTime nepalLocal) -> System.DateTimeOffset
+static Jharicast.Nepal.NepalTime.Zone.get -> System.TimeZoneInfo!
 static Jharicast.Nepal.RainStation.operator !=(Jharicast.Nepal.RainStation? left, Jharicast.Nepal.RainStation? right) -> bool
 static Jharicast.Nepal.RainStation.operator ==(Jharicast.Nepal.RainStation? left, Jharicast.Nepal.RainStation? right) -> bool
 static Jharicast.Nepal.RainTotal.operator !=(Jharicast.Nepal.RainTotal? left, Jharicast.Nepal.RainTotal? right) -> bool
 static Jharicast.Nepal.RainTotal.operator ==(Jharicast.Nepal.RainTotal? left, Jharicast.Nepal.RainTotal? right) -> bool
 static Jharicast.Nepal.RiverStation.operator !=(Jharicast.Nepal.RiverStation? left, Jharicast.Nepal.RiverStation? right) -> bool
 static Jharicast.Nepal.RiverStation.operator ==(Jharicast.Nepal.RiverStation? left, Jharicast.Nepal.RiverStation? right) -> bool
+static Jharicast.Nepal.RoadClosure.operator !=(Jharicast.Nepal.RoadClosure? left, Jharicast.Nepal.RoadClosure? right) -> bool
+static Jharicast.Nepal.RoadClosure.operator ==(Jharicast.Nepal.RoadClosure? left, Jharicast.Nepal.RoadClosure? right) -> bool
 static Jharicast.Nepal.Town.operator !=(Jharicast.Nepal.Town? left, Jharicast.Nepal.Town? right) -> bool
 static Jharicast.Nepal.Town.operator ==(Jharicast.Nepal.Town? left, Jharicast.Nepal.Town? right) -> bool
 static readonly Jharicast.Nepal.DhmBulletinSource.DefaultBaseAddress -> System.Uri!
 static readonly Jharicast.Nepal.DhmWarningsSource.DefaultUrl -> System.Uri!
+static readonly Jharicast.Nepal.DorClosureSource.DefaultUrl -> System.Uri!

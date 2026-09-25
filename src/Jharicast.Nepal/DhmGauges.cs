@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 
@@ -122,57 +121,9 @@ public static class DhmGaugeParser
     /// A copy of the body with only the station fields the parser reads, so free-text fields that
     /// may carry personal data never reach a snapshot store (ADR-0008).
     /// </summary>
-    /// <exception cref="JsonException">The body is not a JSON object.</exception>
-    internal static ReadOnlyMemory<byte> Scrub(ReadOnlyMemory<byte> utf8Json)
-    {
-        using var document = JsonDocument.Parse(utf8Json);
-        if (document.RootElement.ValueKind != JsonValueKind.Object)
-        {
-            throw new JsonException("DHM gauges: the body is not an object.");
-        }
-
-        using var buffer = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(buffer))
-        {
-            writer.WriteStartObject();
-            foreach (var property in document.RootElement.EnumerateObject())
-            {
-                var keep = property.Name switch
-                {
-                    "rainfall_watch" => RainFields,
-                    "river_watch" => RiverFields,
-                    _ => null,
-                };
-                if (keep is null || property.Value.ValueKind != JsonValueKind.Array)
-                {
-                    if (property.Value.ValueKind is not (JsonValueKind.Object or JsonValueKind.Array))
-                    {
-                        property.WriteTo(writer); // scalars such as "type"
-                    }
-
-                    continue;
-                }
-
-                writer.WriteStartArray(property.Name);
-                foreach (var station in property.Value.EnumerateArray().Where(s => s.ValueKind == JsonValueKind.Object))
-                {
-                    writer.WriteStartObject();
-                    foreach (var field in station.EnumerateObject().Where(f => keep.Contains(f.Name)))
-                    {
-                        field.WriteTo(writer);
-                    }
-
-                    writer.WriteEndObject();
-                }
-
-                writer.WriteEndArray();
-            }
-
-            writer.WriteEndObject();
-        }
-
-        return buffer.ToArray();
-    }
+    /// <exception cref="JsonException">The body is not JSON.</exception>
+    internal static ReadOnlyMemory<byte> Scrub(ReadOnlyMemory<byte> utf8Json) =>
+        JsonScrub.KeepFields(utf8Json, new Dictionary<string, HashSet<string>>(StringComparer.Ordinal) { ["rainfall_watch"] = RainFields, ["river_watch"] = RiverFields });
 
     private static RainStation ReadRain(JsonElement s, SortedSet<string> drift)
     {
