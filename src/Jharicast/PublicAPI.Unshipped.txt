@@ -10,6 +10,14 @@ Jharicast.ChangeDirection
 Jharicast.ChangeDirection.Deescalation = 1 -> Jharicast.ChangeDirection
 Jharicast.ChangeDirection.Escalation = 0 -> Jharicast.ChangeDirection
 Jharicast.EnsembleStats
+Jharicast.Geo
+Jharicast.GeoPoint
+Jharicast.GeoPoint.Deconstruct(out double Latitude, out double Longitude) -> void
+Jharicast.GeoPoint.Equals(Jharicast.GeoPoint other) -> bool
+Jharicast.GeoPoint.GeoPoint() -> void
+Jharicast.GeoPoint.GeoPoint(double Latitude, double Longitude) -> void
+Jharicast.GeoPoint.Latitude.get -> double
+Jharicast.GeoPoint.Longitude.get -> double
 Jharicast.LegDayAssessment
 Jharicast.LegDayAssessment.<Clone>$() -> Jharicast.LegDayAssessment!
 Jharicast.LegDayAssessment.Date.get -> System.DateOnly
@@ -150,6 +158,7 @@ Jharicast.ThresholdRule.WatchFraction.get -> double
 Jharicast.ThresholdRule.WatchFraction.init -> void
 Jharicast.ThresholdRule.WatchProbability.get -> double
 Jharicast.ThresholdRule.WatchProbability.init -> void
+override Jharicast.GeoPoint.GetHashCode() -> int
 override Jharicast.LegDayAssessment.Equals(object? obj) -> bool
 override Jharicast.LegDayAssessment.GetHashCode() -> int
 override Jharicast.LegDayAssessment.ToString() -> string!
@@ -182,6 +191,13 @@ static Jharicast.AlertLevels.Max(System.Collections.Generic.IEnumerable<Jharicas
 static Jharicast.AssessmentDiff.Compare(Jharicast.LegDayAssessment? previous, Jharicast.LegDayAssessment! current) -> System.Collections.Generic.IReadOnlyList<Jharicast.MaterialChange!>!
 static Jharicast.EnsembleStats.Exceedance(System.Collections.Generic.IEnumerable<double?>! members, double threshold) -> double
 static Jharicast.EnsembleStats.Quantile(System.Collections.Generic.IEnumerable<double?>! members, double q) -> double
+static Jharicast.Geo.Contains(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! ring, Jharicast.GeoPoint point) -> bool
+static Jharicast.Geo.DecodePolyline(string! encoded, int precision) -> System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>!
+static Jharicast.Geo.DistanceKm(Jharicast.GeoPoint from, Jharicast.GeoPoint to) -> double
+static Jharicast.Geo.DistanceToSegmentKm(Jharicast.GeoPoint point, Jharicast.GeoPoint segmentStart, Jharicast.GeoPoint segmentEnd) -> double
+static Jharicast.Geo.Resample(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! path, double stepKm) -> System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>!
+static Jharicast.GeoPoint.operator !=(Jharicast.GeoPoint left, Jharicast.GeoPoint right) -> bool
+static Jharicast.GeoPoint.operator ==(Jharicast.GeoPoint left, Jharicast.GeoPoint right) -> bool
 static Jharicast.LegDayAssessment.operator !=(Jharicast.LegDayAssessment? left, Jharicast.LegDayAssessment? right) -> bool
 static Jharicast.LegDayAssessment.operator ==(Jharicast.LegDayAssessment? left, Jharicast.LegDayAssessment? right) -> bool
 static Jharicast.LegDayInput.operator !=(Jharicast.LegDayInput? left, Jharicast.LegDayInput? right) -> bool
@@ -204,3 +220,5 @@ static Jharicast.ThresholdRule.Gust.get -> Jharicast.ThresholdRule!
 static Jharicast.ThresholdRule.HillRain.get -> Jharicast.ThresholdRule!
 static Jharicast.ThresholdRule.operator !=(Jharicast.ThresholdRule? left, Jharicast.ThresholdRule? right) -> bool
 static Jharicast.ThresholdRule.operator ==(Jharicast.ThresholdRule? left, Jharicast.ThresholdRule? right) -> bool
+~override Jharicast.GeoPoint.Equals(object obj) -> bool
+~override Jharicast.GeoPoint.ToString() -> string
