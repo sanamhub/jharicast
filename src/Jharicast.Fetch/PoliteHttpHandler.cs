@@ -16,6 +16,7 @@ namespace Jharicast.Fetch;
 /// block (ADR-0007): it identifies itself, obeys robots.txt, keeps one request in flight per host
 /// with a minimum interval, retries only what is safe to retry, stops when a host keeps failing,
 /// and refuses disabled hosts. It never retries a 401 or 403; a refusal is the site saying no.
+/// A GET for a URL seen before is conditional, and a 304 comes back as the remembered 200.
 /// </summary>
 public sealed class PoliteHttpHandler : DelegatingHandler
 {
@@ -31,6 +32,7 @@ public sealed class PoliteHttpHandler : DelegatingHandler
     private readonly ConcurrentDictionary<string, HostGate> _gates = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, Task<RobotsEntry>> _robots = new(StringComparer.OrdinalIgnoreCase);
     private readonly Lock _robotsLock = new();
+    private readonly ConditionalCache _cache = new();
 
     /// <summary>Creates the handler. Set <see cref="DelegatingHandler.InnerHandler"/> before use, or let <c>IHttpClientFactory</c> do it.</summary>
     /// <param name="options">Settings; the User-Agent is required.</param>
@@ -94,7 +96,9 @@ public sealed class PoliteHttpHandler : DelegatingHandler
             }
         }
 
-        return await SendThroughGateAsync(request, gate, cancellationToken).ConfigureAwait(false);
+        _cache.Prepare(request);
+        var response = await SendThroughGateAsync(request, gate, cancellationToken).ConfigureAwait(false);
+        return await _cache.CompleteAsync(request, response, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
