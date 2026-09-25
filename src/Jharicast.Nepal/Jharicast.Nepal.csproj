@@ -13,4 +13,9 @@
     <ProjectReference Include="../Jharicast.OpenMeteo/Jharicast.OpenMeteo.csproj" />
     <ProjectReference Include="../Jharicast.Routing/Jharicast.Routing.csproj" />
   </ItemGroup>
+  <!-- The embedded data keeps its own licence (CC BY-IGO 3.0 for boundaries, ODbL for towns),
+       and both require the credit to travel with the data. -->
+  <ItemGroup>
+    <None Include="../../THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>

@@ -26,6 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PACKAGE.md" Pack="true" PackagePath="/" />
+    <!-- The tool carries the Routing and Nepal assemblies, so their embedded data and its credit. -->
+    <None Include="../../THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="/" />
     <InternalsVisibleTo Include="Jharicast.Cli.Tests" />
   </ItemGroup>
 </Project>

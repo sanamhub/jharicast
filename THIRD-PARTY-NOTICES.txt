@@ -2,13 +2,15 @@ Jharicast includes data from the sources below. The code is MIT licensed; these 
 own licences.
 
 OpenStreetMap
-  Used in: src/Jharicast.Nepal/Towns.cs (town names and positions, each row cites its node id)
+  Used in: src/Jharicast.Nepal/Towns.cs (town names and positions, each row cites its node id),
+    shipped in the Jharicast.Nepal and Jharicast.Cli packages
   Licence: Open Database License (ODbL) 1.0, https://opendatacommons.org/licenses/odbl/1-0/
   Attribution: © OpenStreetMap contributors, https://www.openstreetmap.org/copyright
   Note: the town list is a derived database under the ODbL. Changes to it stay under the ODbL.
 
 Administrative boundaries
-  Used in: src/Jharicast.Routing/Data/districts.json (district polygons)
+  Used in: src/Jharicast.Routing/Data/districts.json (district polygons), shipped in the
+    Jharicast.Routing and Jharicast.Cli packages
   Source: Survey Department of Nepal and UN RCO Nepal, via OCHA / HDX (cod-ab-npl, v02,
     npl_admin2.geojson, files dated 2026-08-14), https://data.humdata.org/dataset/cod-ab-npl
   Licence: Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO) 3.0,
@@ -17,3 +19,18 @@ Administrative boundaries
   Modified: each outer ring simplified with Douglas-Peucker at 0.002 degrees (about 200 m),
     coordinates rounded to 5 decimals, names replaced by Jharicast district ids, all other
     attributes dropped, and written as JSON (tools/districts/build-districts.cs).
+
+Test fixtures (not in any package)
+  Used in: tests/Jharicast.Tests/Fixtures and tests/Jharicast.Cli.Tests/Fixtures
+  The files named dhm-*, bipad-* and open-meteo-* are responses captured from the public pages
+  and APIs of the Department of Hydrology and Meteorology (DHM), Nepal, the BIPAD portal
+  (NDRRMA) and Open-Meteo (CC BY 4.0). They remain their owners' data and are kept only so the
+  parsers can be tested. osrm-route-docs-example.json is the Route example of OSRM's HTTP API
+  documentation, re-encoded as polyline6. The files named *-synthetic.json and those under Fixtures/replay that
+  are not links to the captures are made up, with fake values.
+
+Data fetched at run time
+  Jharicast does not redistribute what it fetches. Anything that shows it must credit:
+  "Weather data by Open-Meteo.com (CC BY 4.0)"; "Contains ECMWF data (CC BY 4.0)";
+  "(c) OpenStreetMap contributors (ODbL)" for routes; and DHM, the Department of Roads (DoR) and
+  NDRRMA (BIPAD) by name for their warnings, closures, alerts and incidents.

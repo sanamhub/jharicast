@@ -11,7 +11,14 @@
     <PackageProjectUrl>https://github.com/sanamhub/jharicast</PackageProjectUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <!-- nuget.org shows PACKAGE.md on the package page. It cannot resolve relative links, so every
+       link in it is absolute. -->
+  <ItemGroup>
+    <None Include="PACKAGE.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <!-- Build time only: PrivateAssets keeps the analyzer out of every package's dependency list,
        so the core still ships with no dependencies at all. Without it, a public member added

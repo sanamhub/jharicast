@@ -11,4 +11,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Data/districts.json" LogicalName="Jharicast.Routing.districts.json" />
   </ItemGroup>
+  <!-- The embedded data keeps its own licence (CC BY-IGO 3.0 for boundaries, ODbL for towns),
+       and both require the credit to travel with the data. -->
+  <ItemGroup>
+    <None Include="../../THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>
