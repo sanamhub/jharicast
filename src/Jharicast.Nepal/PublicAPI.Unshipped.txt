@@ -194,6 +194,41 @@ Jharicast.Nepal.Hazard.SnowFall = 3 -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.Hazard.ThunderStorm = 2 -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.Hazard.Tornado = 9 -> Jharicast.Nepal.Hazard
 Jharicast.Nepal.Hazard.WindGust = 1 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.NepalLegDay
+Jharicast.Nepal.NepalLegDay.<Clone>$() -> Jharicast.Nepal.NepalLegDay!
+Jharicast.Nepal.NepalLegDay.Assessment.get -> Jharicast.LegDayAssessment!
+Jharicast.Nepal.NepalLegDay.Assessment.init -> void
+Jharicast.Nepal.NepalLegDay.Closures.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.RoadClosure!>!
+Jharicast.Nepal.NepalLegDay.Closures.init -> void
+Jharicast.Nepal.NepalLegDay.Deconstruct(out Jharicast.LegDayAssessment! Assessment, out Jharicast.LegDayInput! Input, out double DistanceKm, out double HillKm, out System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.District!>! Districts, out System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.RoadClosure!>! Closures) -> void
+Jharicast.Nepal.NepalLegDay.DistanceKm.get -> double
+Jharicast.Nepal.NepalLegDay.DistanceKm.init -> void
+Jharicast.Nepal.NepalLegDay.Districts.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.District!>!
+Jharicast.Nepal.NepalLegDay.Districts.init -> void
+Jharicast.Nepal.NepalLegDay.Equals(Jharicast.Nepal.NepalLegDay? other) -> bool
+Jharicast.Nepal.NepalLegDay.HillKm.get -> double
+Jharicast.Nepal.NepalLegDay.HillKm.init -> void
+Jharicast.Nepal.NepalLegDay.Input.get -> Jharicast.LegDayInput!
+Jharicast.Nepal.NepalLegDay.Input.init -> void
+Jharicast.Nepal.NepalLegDay.NepalLegDay(Jharicast.LegDayAssessment! Assessment, Jharicast.LegDayInput! Input, double DistanceKm, double HillKm, System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.District!>! Districts, System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.RoadClosure!>! Closures) -> void
+Jharicast.Nepal.NepalRouteAssessment
+Jharicast.Nepal.NepalRouteAssessment.<Clone>$() -> Jharicast.Nepal.NepalRouteAssessment!
+Jharicast.Nepal.NepalRouteAssessment.Deconstruct(out string! RouteId, out System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.NepalLegDay!>! Legs, out System.Collections.Generic.IReadOnlyDictionary<string!, Jharicast.Fetch.SourceHealth!>! Health, out System.Collections.Generic.IReadOnlyList<Jharicast.Provenance!>! Provenance) -> void
+Jharicast.Nepal.NepalRouteAssessment.Equals(Jharicast.Nepal.NepalRouteAssessment? other) -> bool
+Jharicast.Nepal.NepalRouteAssessment.Health.get -> System.Collections.Generic.IReadOnlyDictionary<string!, Jharicast.Fetch.SourceHealth!>!
+Jharicast.Nepal.NepalRouteAssessment.Health.init -> void
+Jharicast.Nepal.NepalRouteAssessment.Legs.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.NepalLegDay!>!
+Jharicast.Nepal.NepalRouteAssessment.Legs.init -> void
+Jharicast.Nepal.NepalRouteAssessment.NepalRouteAssessment(string! RouteId, System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.NepalLegDay!>! Legs, System.Collections.Generic.IReadOnlyDictionary<string!, Jharicast.Fetch.SourceHealth!>! Health, System.Collections.Generic.IReadOnlyList<Jharicast.Provenance!>! Provenance) -> void
+Jharicast.Nepal.NepalRouteAssessment.Provenance.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Provenance!>!
+Jharicast.Nepal.NepalRouteAssessment.Provenance.init -> void
+Jharicast.Nepal.NepalRouteAssessment.RouteId.get -> string!
+Jharicast.Nepal.NepalRouteAssessment.RouteId.init -> void
+Jharicast.Nepal.NepalRouteAssessor
+Jharicast.Nepal.NepalRouteAssessor.AssessAsync(Jharicast.Route! route, Jharicast.RouteRuleSet! rules, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Nepal.NepalRouteAssessment!>!
+Jharicast.Nepal.NepalRouteAssessor.NepalRouteAssessor(Jharicast.OpenMeteo.OpenMeteoClient! openMeteo, Jharicast.Fetch.ISource<Jharicast.Nepal.DhmWarningSnapshot!>! warnings, Jharicast.Fetch.ISource<Jharicast.Nepal.DorClosureSnapshot!>! closures, Jharicast.Routing.IRouteProvider! routing, System.TimeProvider! timeProvider) -> void
+Jharicast.Nepal.NepalRouteAssessor.OfficialHorizonDays.get -> int
+Jharicast.Nepal.NepalRouteAssessor.OfficialHorizonDays.init -> void
 Jharicast.Nepal.NepalTime
 Jharicast.Nepal.Province
 Jharicast.Nepal.Province.Bagmati = 3 -> Jharicast.Nepal.Province
@@ -343,6 +378,12 @@ override Jharicast.Nepal.DistrictWarning.ToString() -> string!
 override Jharicast.Nepal.DorClosureSnapshot.Equals(object? obj) -> bool
 override Jharicast.Nepal.DorClosureSnapshot.GetHashCode() -> int
 override Jharicast.Nepal.DorClosureSnapshot.ToString() -> string!
+override Jharicast.Nepal.NepalLegDay.Equals(object? obj) -> bool
+override Jharicast.Nepal.NepalLegDay.GetHashCode() -> int
+override Jharicast.Nepal.NepalLegDay.ToString() -> string!
+override Jharicast.Nepal.NepalRouteAssessment.Equals(object? obj) -> bool
+override Jharicast.Nepal.NepalRouteAssessment.GetHashCode() -> int
+override Jharicast.Nepal.NepalRouteAssessment.ToString() -> string!
 override Jharicast.Nepal.RainStation.Equals(object? obj) -> bool
 override Jharicast.Nepal.RainStation.GetHashCode() -> int
 override Jharicast.Nepal.RainStation.ToString() -> string!
@@ -383,6 +424,10 @@ static Jharicast.Nepal.DorClosureSnapshot.operator ==(Jharicast.Nepal.DorClosure
 static Jharicast.Nepal.Gazetteer.Districts.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.District!>!
 static Jharicast.Nepal.Gazetteer.Towns.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Nepal.Town!>!
 static Jharicast.Nepal.Gazetteer.TryResolve(string? name, out Jharicast.Nepal.District! district) -> bool
+static Jharicast.Nepal.NepalLegDay.operator !=(Jharicast.Nepal.NepalLegDay? left, Jharicast.Nepal.NepalLegDay? right) -> bool
+static Jharicast.Nepal.NepalLegDay.operator ==(Jharicast.Nepal.NepalLegDay? left, Jharicast.Nepal.NepalLegDay? right) -> bool
+static Jharicast.Nepal.NepalRouteAssessment.operator !=(Jharicast.Nepal.NepalRouteAssessment? left, Jharicast.Nepal.NepalRouteAssessment? right) -> bool
+static Jharicast.Nepal.NepalRouteAssessment.operator ==(Jharicast.Nepal.NepalRouteAssessment? left, Jharicast.Nepal.NepalRouteAssessment? right) -> bool
 static Jharicast.Nepal.NepalTime.DateOf(System.DateTimeOffset instant) -> System.DateOnly
 static Jharicast.Nepal.NepalTime.ToUtc(System.DateTime nepalLocal) -> System.DateTimeOffset
 static Jharicast.Nepal.NepalTime.Zone.get -> System.TimeZoneInfo!

@@ -1,0 +1,14 @@
+{
+  "code": "Ok",
+  "routes": [
+    {
+      "geometry": "o{dyq@wkqyfDol_@vixPozD~__YoinB~wmo@_jnO~xkb@_brJ~wpk@_hgN~lpG_`kI~yfY_ibE~_kI~dtB~e`M_af@~ggN_cmA~hp\\~arJ~f^nvlA~z`I",
+      "distance": 624000.0,
+      "duration": 30240.0,
+      "legs": [],
+      "weight_name": "routability",
+      "weight": 30240.0
+    }
+  ],
+  "waypoints": []
+}

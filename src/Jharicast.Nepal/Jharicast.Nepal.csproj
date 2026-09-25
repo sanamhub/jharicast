@@ -8,5 +8,9 @@
   <ItemGroup>
     <ProjectReference Include="../Jharicast/Jharicast.csproj" />
     <ProjectReference Include="../Jharicast.Fetch/Jharicast.Fetch.csproj" />
+    <!-- NepalRouteAssessor joins routing and model data with the official sources (PLAN.md 3.6).
+         ADR-0003 allows the Routing reference; nothing references Nepal back. -->
+    <ProjectReference Include="../Jharicast.OpenMeteo/Jharicast.OpenMeteo.csproj" />
+    <ProjectReference Include="../Jharicast.Routing/Jharicast.Routing.csproj" />
   </ItemGroup>
 </Project>

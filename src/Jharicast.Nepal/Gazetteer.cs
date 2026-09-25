@@ -154,6 +154,8 @@ public static partial class Gazetteer
     // Declared after Districts on purpose: static initializers run in source order.
     private static readonly FrozenDictionary<string, District> ByKey = BuildIndex();
 
+    private static readonly FrozenDictionary<string, District> IdIndex = Districts.ToFrozenDictionary(d => d.Id, StringComparer.Ordinal);
+
     /// <summary>Resolves any known spelling, ignoring case, spaces, underscores and punctuation.</summary>
     /// <param name="name">A district name from any source.</param>
     /// <param name="district">The district, when found.</param>
@@ -163,6 +165,10 @@ public static partial class Gazetteer
         district = null!;
         return name is not null && ByKey.TryGetValue(Key(name), out district!);
     }
+
+    /// <summary>The district with a <see cref="District.Id"/>, as <c>Jharicast.Routing</c> returns them.</summary>
+    /// <exception cref="KeyNotFoundException">Not a gazetteer id.</exception>
+    internal static District ById(string id) => IdIndex[id];
 
     internal static string Key(string name) => new(name.Where(char.IsAsciiLetter).Select(char.ToLowerInvariant).ToArray());
 
