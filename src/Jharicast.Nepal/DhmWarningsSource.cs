@@ -27,7 +27,7 @@ public sealed class DhmWarningsSource : ISource<DhmWarningSnapshot>
     private static readonly TimeSpan Cadence = TimeSpan.FromHours(6);
 
     private readonly SourceFetcher _fetcher;
-    private readonly Uri _url;
+    private readonly SourceRequest<DhmWarningSnapshot> _request;
 
     /// <summary>Creates the source.</summary>
     /// <param name="httpClient">Client built on <see cref="PoliteHttpHandler"/>; not disposed by this class.</param>
@@ -41,10 +41,10 @@ public sealed class DhmWarningsSource : ISource<DhmWarningSnapshot>
         ArgumentNullException.ThrowIfNull(store);
         ArgumentNullException.ThrowIfNull(timeProvider);
         _fetcher = new SourceFetcher(httpClient, store, timeProvider);
-        _url = url ?? DefaultUrl;
+        _request = new SourceRequest<DhmWarningSnapshot>(DhmWarningsParser.SourceId, url ?? DefaultUrl, Cadence, DhmWarningsParser.Parse, s => s.Drift);
     }
 
     /// <inheritdoc />
     public Task<SourceResult<DhmWarningSnapshot>> FetchAsync(CancellationToken cancellationToken) =>
-        _fetcher.FetchAsync(DhmWarningsParser.SourceId, _url, Cadence, DhmWarningsParser.Parse, s => s.Drift, scrub: null, cancellationToken);
+        _fetcher.FetchAsync(_request, cancellationToken);
 }
