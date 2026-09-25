@@ -18,6 +18,20 @@ Jharicast.GeoPoint.GeoPoint() -> void
 Jharicast.GeoPoint.GeoPoint(double Latitude, double Longitude) -> void
 Jharicast.GeoPoint.Latitude.get -> double
 Jharicast.GeoPoint.Longitude.get -> double
+Jharicast.Leg
+Jharicast.Leg.<Clone>$() -> Jharicast.Leg!
+Jharicast.Leg.Date.get -> System.DateOnly
+Jharicast.Leg.Date.init -> void
+Jharicast.Leg.Deconstruct(out string! Id, out Jharicast.GeoPoint From, out Jharicast.GeoPoint To, out System.DateOnly Date) -> void
+Jharicast.Leg.Equals(Jharicast.Leg? other) -> bool
+Jharicast.Leg.From.get -> Jharicast.GeoPoint
+Jharicast.Leg.From.init -> void
+Jharicast.Leg.Id.get -> string!
+Jharicast.Leg.Leg(string! Id, Jharicast.GeoPoint From, Jharicast.GeoPoint To, System.DateOnly Date) -> void
+Jharicast.Leg.To.get -> Jharicast.GeoPoint
+Jharicast.Leg.To.init -> void
+Jharicast.Leg.Via.get -> System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>!
+Jharicast.Leg.Via.init -> void
 Jharicast.LegDayAssessment
 Jharicast.LegDayAssessment.<Clone>$() -> Jharicast.LegDayAssessment!
 Jharicast.LegDayAssessment.Date.get -> System.DateOnly
@@ -109,6 +123,13 @@ Jharicast.RainAlertRule.YellowMedianMm.get -> double
 Jharicast.RainAlertRule.YellowMedianMm.init -> void
 Jharicast.RainAlertRule.YellowP50.get -> double
 Jharicast.RainAlertRule.YellowP50.init -> void
+Jharicast.Route
+Jharicast.Route.<Clone>$() -> Jharicast.Route!
+Jharicast.Route.Deconstruct(out string! Id, out System.Collections.Generic.IReadOnlyList<Jharicast.Leg!>! Legs) -> void
+Jharicast.Route.Equals(Jharicast.Route? other) -> bool
+Jharicast.Route.Id.get -> string!
+Jharicast.Route.Legs.get -> System.Collections.Generic.IReadOnlyList<Jharicast.Leg!>!
+Jharicast.Route.Route(string! Id, System.Collections.Generic.IReadOnlyList<Jharicast.Leg!>! Legs) -> void
 Jharicast.RouteRuleSet
 Jharicast.RouteRuleSet.<Clone>$() -> Jharicast.RouteRuleSet!
 Jharicast.RouteRuleSet.Equals(Jharicast.RouteRuleSet? other) -> bool
@@ -158,7 +179,18 @@ Jharicast.ThresholdRule.WatchFraction.get -> double
 Jharicast.ThresholdRule.WatchFraction.init -> void
 Jharicast.ThresholdRule.WatchProbability.get -> double
 Jharicast.ThresholdRule.WatchProbability.init -> void
+Jharicast.TimeWindow
+Jharicast.TimeWindow.<Clone>$() -> Jharicast.TimeWindow!
+Jharicast.TimeWindow.Days() -> System.Collections.Generic.IReadOnlyList<System.DateOnly>!
+Jharicast.TimeWindow.Deconstruct(out System.DateOnly Start, out System.DateOnly End) -> void
+Jharicast.TimeWindow.End.get -> System.DateOnly
+Jharicast.TimeWindow.Equals(Jharicast.TimeWindow? other) -> bool
+Jharicast.TimeWindow.Start.get -> System.DateOnly
+Jharicast.TimeWindow.TimeWindow(System.DateOnly Start, System.DateOnly End) -> void
 override Jharicast.GeoPoint.GetHashCode() -> int
+override Jharicast.Leg.Equals(object? obj) -> bool
+override Jharicast.Leg.GetHashCode() -> int
+override Jharicast.Leg.ToString() -> string!
 override Jharicast.LegDayAssessment.Equals(object? obj) -> bool
 override Jharicast.LegDayAssessment.GetHashCode() -> int
 override Jharicast.LegDayAssessment.ToString() -> string!
@@ -177,6 +209,9 @@ override Jharicast.Provenance.ToString() -> string!
 override Jharicast.RainAlertRule.Equals(object? obj) -> bool
 override Jharicast.RainAlertRule.GetHashCode() -> int
 override Jharicast.RainAlertRule.ToString() -> string!
+override Jharicast.Route.Equals(object? obj) -> bool
+override Jharicast.Route.GetHashCode() -> int
+override Jharicast.Route.ToString() -> string!
 override Jharicast.RouteRuleSet.Equals(object? obj) -> bool
 override Jharicast.RouteRuleSet.GetHashCode() -> int
 override Jharicast.RouteRuleSet.ToString() -> string!
@@ -186,6 +221,9 @@ override Jharicast.RuleResult.ToString() -> string!
 override Jharicast.ThresholdRule.Equals(object? obj) -> bool
 override Jharicast.ThresholdRule.GetHashCode() -> int
 override Jharicast.ThresholdRule.ToString() -> string!
+override Jharicast.TimeWindow.Equals(object? obj) -> bool
+override Jharicast.TimeWindow.GetHashCode() -> int
+override Jharicast.TimeWindow.ToString() -> string!
 static Jharicast.AlertLevels.Combine(Jharicast.AlertLevel? official, Jharicast.AlertLevel model) -> Jharicast.AlertLevel
 static Jharicast.AlertLevels.Max(System.Collections.Generic.IEnumerable<Jharicast.AlertLevel>! levels) -> Jharicast.AlertLevel
 static Jharicast.AssessmentDiff.Compare(Jharicast.LegDayAssessment? previous, Jharicast.LegDayAssessment! current) -> System.Collections.Generic.IReadOnlyList<Jharicast.MaterialChange!>!
@@ -198,6 +236,8 @@ static Jharicast.Geo.DistanceToSegmentKm(Jharicast.GeoPoint point, Jharicast.Geo
 static Jharicast.Geo.Resample(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! path, double stepKm) -> System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>!
 static Jharicast.GeoPoint.operator !=(Jharicast.GeoPoint left, Jharicast.GeoPoint right) -> bool
 static Jharicast.GeoPoint.operator ==(Jharicast.GeoPoint left, Jharicast.GeoPoint right) -> bool
+static Jharicast.Leg.operator !=(Jharicast.Leg? left, Jharicast.Leg? right) -> bool
+static Jharicast.Leg.operator ==(Jharicast.Leg? left, Jharicast.Leg? right) -> bool
 static Jharicast.LegDayAssessment.operator !=(Jharicast.LegDayAssessment? left, Jharicast.LegDayAssessment? right) -> bool
 static Jharicast.LegDayAssessment.operator ==(Jharicast.LegDayAssessment? left, Jharicast.LegDayAssessment? right) -> bool
 static Jharicast.LegDayInput.operator !=(Jharicast.LegDayInput? left, Jharicast.LegDayInput? right) -> bool
@@ -211,6 +251,8 @@ static Jharicast.Provenance.operator ==(Jharicast.Provenance? left, Jharicast.Pr
 static Jharicast.RainAlertRule.operator !=(Jharicast.RainAlertRule? left, Jharicast.RainAlertRule? right) -> bool
 static Jharicast.RainAlertRule.operator ==(Jharicast.RainAlertRule? left, Jharicast.RainAlertRule? right) -> bool
 static Jharicast.RainAlertRule.V1.get -> Jharicast.RainAlertRule!
+static Jharicast.Route.operator !=(Jharicast.Route? left, Jharicast.Route? right) -> bool
+static Jharicast.Route.operator ==(Jharicast.Route? left, Jharicast.Route? right) -> bool
 static Jharicast.RouteRuleSet.operator !=(Jharicast.RouteRuleSet? left, Jharicast.RouteRuleSet? right) -> bool
 static Jharicast.RouteRuleSet.operator ==(Jharicast.RouteRuleSet? left, Jharicast.RouteRuleSet? right) -> bool
 static Jharicast.RouteRuleSet.V1.get -> Jharicast.RouteRuleSet!
@@ -220,5 +262,7 @@ static Jharicast.ThresholdRule.Gust.get -> Jharicast.ThresholdRule!
 static Jharicast.ThresholdRule.HillRain.get -> Jharicast.ThresholdRule!
 static Jharicast.ThresholdRule.operator !=(Jharicast.ThresholdRule? left, Jharicast.ThresholdRule? right) -> bool
 static Jharicast.ThresholdRule.operator ==(Jharicast.ThresholdRule? left, Jharicast.ThresholdRule? right) -> bool
+static Jharicast.TimeWindow.operator !=(Jharicast.TimeWindow? left, Jharicast.TimeWindow? right) -> bool
+static Jharicast.TimeWindow.operator ==(Jharicast.TimeWindow? left, Jharicast.TimeWindow? right) -> bool
 ~override Jharicast.GeoPoint.Equals(object obj) -> bool
 ~override Jharicast.GeoPoint.ToString() -> string
