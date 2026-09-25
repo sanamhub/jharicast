@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Generic polite acquisition (ADR-0003, ADR-0007). It knows nothing about weather, so it
+       references no other Jharicast project. -->
+  <PropertyGroup>
+    <RootNamespace>Jharicast.Fetch</RootNamespace>
+    <Description>Polite HTTP acquisition for public data feeds: an identifying User-Agent, one request in flight per host, minimum intervals, bounded retries, a per-host circuit breaker and kill switches. No evasion of any kind.</Description>
+  </PropertyGroup>
+</Project>

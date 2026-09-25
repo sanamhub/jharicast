@@ -1,0 +1,24 @@
+#nullable enable
+Jharicast.Fetch.PoliteHttpHandler
+Jharicast.Fetch.PoliteHttpHandler.PoliteHttpHandler(Jharicast.Fetch.PoliteHttpOptions! options) -> void
+Jharicast.Fetch.PoliteHttpHandler.PoliteHttpHandler(Jharicast.Fetch.PoliteHttpOptions! options, System.Net.Http.HttpMessageHandler! innerHandler) -> void
+Jharicast.Fetch.PoliteHttpOptions
+Jharicast.Fetch.PoliteHttpOptions.BreakerDuration.get -> System.TimeSpan
+Jharicast.Fetch.PoliteHttpOptions.BreakerDuration.init -> void
+Jharicast.Fetch.PoliteHttpOptions.BreakerFailures.get -> int
+Jharicast.Fetch.PoliteHttpOptions.BreakerFailures.init -> void
+Jharicast.Fetch.PoliteHttpOptions.DefaultMinInterval.get -> System.TimeSpan
+Jharicast.Fetch.PoliteHttpOptions.DefaultMinInterval.init -> void
+Jharicast.Fetch.PoliteHttpOptions.DisabledHosts.get -> System.Collections.Generic.HashSet<string!>!
+Jharicast.Fetch.PoliteHttpOptions.HostOverrides.get -> System.Collections.Generic.Dictionary<string!, System.TimeSpan>!
+Jharicast.Fetch.PoliteHttpOptions.MaxRetries.get -> int
+Jharicast.Fetch.PoliteHttpOptions.MaxRetries.init -> void
+Jharicast.Fetch.PoliteHttpOptions.PoliteHttpOptions() -> void
+Jharicast.Fetch.PoliteHttpOptions.TimeProvider.get -> System.TimeProvider!
+Jharicast.Fetch.PoliteHttpOptions.TimeProvider.init -> void
+Jharicast.Fetch.PoliteHttpOptions.UserAgent.get -> string!
+Jharicast.Fetch.PoliteHttpOptions.UserAgent.init -> void
+Jharicast.Fetch.SourceUnavailableException
+Jharicast.Fetch.SourceUnavailableException.SourceUnavailableException() -> void
+Jharicast.Fetch.SourceUnavailableException.SourceUnavailableException(string! message) -> void
+Jharicast.Fetch.SourceUnavailableException.SourceUnavailableException(string! message, System.Exception! innerException) -> void

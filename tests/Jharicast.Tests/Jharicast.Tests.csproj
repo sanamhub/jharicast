@@ -7,9 +7,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
     <!-- CI runs dotnet test with coverage and a TRX report; both are runner extensions. -->
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
     <ProjectReference Include="../../src/Jharicast/Jharicast.csproj" />
+    <ProjectReference Include="../../src/Jharicast.Fetch/Jharicast.Fetch.csproj" />
   </ItemGroup>
 </Project>
