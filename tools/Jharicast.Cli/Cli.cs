@@ -21,8 +21,7 @@ internal static class Cli
     public static async Task<int> RunAsync(string[] args, CliHost host, CancellationToken cancellationToken = default)
     {
         var root = Build(host);
-        var configuration = new CommandLineConfiguration(root) { Output = host.Out, Error = host.Error };
-        var parse = configuration.Parse(args);
+        var parse = root.Parse(args);
         if (parse.Errors.Count > 0)
         {
             foreach (var error in parse.Errors)
@@ -34,7 +33,8 @@ internal static class Cli
             return CouldNotRun;
         }
 
-        return await parse.InvokeAsync(cancellationToken).ConfigureAwait(false);
+        var invocation = new InvocationConfiguration { Output = host.Out, Error = host.Error };
+        return await parse.InvokeAsync(invocation, cancellationToken).ConfigureAwait(false);
     }
 
     // A plain command named jharicast, not RootCommand: RootCommand takes its name from the

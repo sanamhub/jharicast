@@ -13,6 +13,6 @@
     <!-- The CLI's parser. Pinned to the build already in the local package cache, because this
          change was made with no network access; move to the stable 2.0 line on the next online
          restore. -->
-    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta5.25277.114" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.12" />
   </ItemGroup>
 </Project>
