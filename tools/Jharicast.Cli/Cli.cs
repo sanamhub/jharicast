@@ -11,7 +11,7 @@ using Jharicast.Fetch;
 
 namespace Jharicast.Cli;
 
-/// <summary>The command tree. Exit codes: 0 done, 1 a source check found an official source failing or drifting, 2 the command could not run.</summary>
+/// <summary>The command tree. Exit codes: 0 done, 1 <c>sources check</c> found an official source failing or drifting, 2 the command could not run.</summary>
 internal static class Cli
 {
     public const int Done = 0;
@@ -45,6 +45,8 @@ internal static class Cli
         root.Options.Add(new System.CommandLine.Help.HelpOption());
         root.Options.Add(new VersionOption());
         root.Subcommands.Add(Route(host));
+        root.Subcommands.Add(Alerts(host));
+        root.Subcommands.Add(Sources(host));
         return root;
     }
 
@@ -80,6 +82,41 @@ internal static class Cli
         return command;
     }
 
+    private static Command Alerts(CliHost host)
+    {
+        var common = new CommonOptions();
+        var date = new Option<DateOnly>("--date") { Description = "First day, Nepal time, yyyy-MM-dd.", Required = true, CustomParser = DateArgument };
+        var days = new Option<int>("--days") { Description = "Days to show from --date.", DefaultValueFactory = _ => 5 };
+        var json = new Option<bool>("--json") { Description = "Print the table as JSON." };
+        var command = new Command("alerts", "Our own rain level against DHM's, by province and day, with the agreement score.") { date, days, json };
+        common.AddTo(command);
+        command.SetAction((parse, token) => Guard(host, async () =>
+        {
+            var count = parse.GetValue(days);
+            if (count is < 1 or > 16)
+            {
+                throw new CliException("--days must be 1 to 16.");
+            }
+
+            using var wiring = Wiring.Create(common.Read(parse), host);
+            return await AlertsCommand.RunAsync(new AlertsRequest(parse.GetValue(date), count, parse.GetValue(json)), wiring, host.Out, token).ConfigureAwait(false);
+        }));
+        return command;
+    }
+
+    private static Command Sources(CliHost host)
+    {
+        var common = new CommonOptions();
+        var check = new Command("check", "Fetch each source once, politely, and print its health. Exit code 1 when an official source is failing or drifting.");
+        common.AddTo(check);
+        check.SetAction((parse, token) => Guard(host, async () =>
+        {
+            using var wiring = Wiring.Create(common.Read(parse), host);
+            return await SourcesCommand.RunAsync(wiring, host.Out, token).ConfigureAwait(false);
+        }));
+        return new Command("sources", "The data sources Jharicast reads.") { check };
+    }
+
     private static DateOnly DateArgument(System.CommandLine.Parsing.ArgumentResult result)
     {
         var text = result.Tokens.Count == 1 ? result.Tokens[0].Value : string.Empty;
@@ -91,11 +128,6 @@ internal static class Cli
         result.AddError($"'{text}' is not a date. Use yyyy-MM-dd.");
         return default;
     }
-
-    internal static DateOnly ParseDate(string text) =>
-        DateOnly.TryParseExact(text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var d)
-            ? d
-            : throw new CliException($"'{text}' is not a date. Use yyyy-MM-dd.");
 
     // One place turns every expected failure into a line on stderr and exit code 2. A refusal is
     // reported as the site's answer, and nothing retries around it (ADR-0007).

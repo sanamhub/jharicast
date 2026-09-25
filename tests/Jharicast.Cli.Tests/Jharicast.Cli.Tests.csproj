@@ -19,6 +19,11 @@
   <ItemGroup>
     <None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../Jharicast.Tests/Fixtures/dhm-getapidata-1-2026-09-24.json" Link="Fixtures/replay/dhm.gov.np/home/getAPIData/1.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/dhm-getapidata-3-2026-09-25.json" Link="Fixtures/replay/dhm.gov.np/home/getAPIData/3.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/dhm-mfd-three-days-forecast-latest-2026-09-25.json" Link="Fixtures/replay/dhm.gov.np/mfd/api/three-days-forecast-latest.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/dhm-mfd-three-days-forecast-1578-2026-09-25.json" Link="Fixtures/replay/dhm.gov.np/mfd/api/three-days-forecast/1578.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/bipad-alert-2026-09-25.json" Link="Fixtures/replay/bipadportal.gov.np/api/v1/alert.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/bipad-incident-2026-09-25.json" Link="Fixtures/replay/bipadportal.gov.np/api/v1/incident.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../Jharicast.Tests/Fixtures/osrm-route-birtamod-lumbini-synthetic.json" Link="Fixtures/replay/router.project-osrm.org/route/v1/driving.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

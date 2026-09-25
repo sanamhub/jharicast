@@ -50,9 +50,10 @@ internal static class CliRunner
 
 /// <summary>
 /// Stands in for the network under <c>PoliteHttpHandler</c> in "live" tests. robots.txt comes
-/// from a function; everything else from the replay directory. Nothing leaves the process.
+/// from a function; everything else from <c>answer</c> when it returns a response, else from the
+/// replay directory. Nothing leaves the process.
 /// </summary>
-internal sealed class FakeNetwork(Func<string, string?> robots) : HttpMessageHandler
+internal sealed class FakeNetwork(Func<string, string?> robots, Func<Uri, HttpResponseMessage?>? answer = null) : HttpMessageHandler
 {
     private readonly HttpMessageInvoker _replay = new(new FixtureHandler(CliRunner.Replay));
 
@@ -68,7 +69,7 @@ internal sealed class FakeNetwork(Func<string, string?> robots) : HttpMessageHan
                 : new HttpResponseMessage(HttpStatusCode.NotFound);
         }
 
-        return await _replay.SendAsync(request, cancellationToken);
+        return answer?.Invoke(request.RequestUri) ?? await _replay.SendAsync(request, cancellationToken);
     }
 
     protected override void Dispose(bool disposing)
