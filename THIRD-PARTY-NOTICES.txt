@@ -6,3 +6,14 @@ OpenStreetMap
   Licence: Open Database License (ODbL) 1.0, https://opendatacommons.org/licenses/odbl/1-0/
   Attribution: © OpenStreetMap contributors, https://www.openstreetmap.org/copyright
   Note: the town list is a derived database under the ODbL. Changes to it stay under the ODbL.
+
+Administrative boundaries
+  Used in: src/Jharicast.Routing/Data/districts.json (district polygons)
+  Source: Survey Department of Nepal and UN RCO Nepal, via OCHA / HDX (cod-ab-npl, v02,
+    npl_admin2.geojson, files dated 2026-08-14), https://data.humdata.org/dataset/cod-ab-npl
+  Licence: Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO) 3.0,
+    https://creativecommons.org/licenses/by/3.0/igo/legalcode (licence read from the HDX
+    dataset metadata on 2026-09-26)
+  Modified: each outer ring simplified with Douglas-Peucker at 0.002 degrees (about 200 m),
+    coordinates rounded to 5 decimals, names replaced by Jharicast district ids, all other
+    attributes dropped, and written as JSON (tools/districts/build-districts.cs).

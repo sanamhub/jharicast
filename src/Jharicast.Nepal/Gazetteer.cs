@@ -59,8 +59,13 @@ public sealed record District(string Id, string Name, string NameNe, Province Pr
 /// "Chitwan", "Dhanusa", "Nawalparasi_E", "Rukum_E". <see cref="TryResolve"/> maps all of them.
 /// </summary>
 /// <remarks>
-/// Nepali names come from DHM's district GeoJSON. Belts follow the CBS 16 mountain and 21 Terai
-/// district lists and are UNVERIFIED against the current CBS publication (IMPLEMENTATION task N02).
+/// Nepali names come from DHM's district GeoJSON. Belts follow the Central Bureau of Statistics
+/// census split, as in the National Population and Housing Census 2011 National Report (16
+/// mountain, 39 hill, 20 Terai districts), carried to 77 districts: Nawalparasi's two halves are
+/// both Terai and Rukum's are both hill, giving 16, 40 and 21. The Local Government Operation Act
+/// 2017 uses a different split (Ramechhap as mountain; Chitwan, Nawalpur and Dang not Terai),
+/// which Jharicast does not follow. Checked 2026-09-26 against secondary copies of the lists; the
+/// CBS report itself was not read.
 /// </remarks>
 public static partial class Gazetteer
 {

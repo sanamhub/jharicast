@@ -3,6 +3,7 @@
     <Project Path="src/Jharicast/Jharicast.csproj" />
     <Project Path="src/Jharicast.Fetch/Jharicast.Fetch.csproj" />
     <Project Path="src/Jharicast.OpenMeteo/Jharicast.OpenMeteo.csproj" />
+    <Project Path="src/Jharicast.Routing/Jharicast.Routing.csproj" />
     <Project Path="src/Jharicast.Nepal/Jharicast.Nepal.csproj" />
   </Folder>
   <Folder Name="/tests/">

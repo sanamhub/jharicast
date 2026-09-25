@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Jharicast.Routing</RootNamespace>
+    <Description>Routing for Jharicast: road geometry from OSRM, sampling every few km with elevation-based hill sections, and district lookup over embedded Nepal district polygons (COD-AB, CC BY-IGO 3.0).</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Jharicast/Jharicast.csproj" />
+  </ItemGroup>
+  <!-- Simplified COD-AB district rings, built by tools/districts/build-districts.cs. The data is
+       CC BY-IGO 3.0, not MIT (THIRD-PARTY-NOTICES.txt, ADR-0014). -->
+  <ItemGroup>
+    <EmbeddedResource Include="Data/districts.json" LogicalName="Jharicast.Routing.districts.json" />
+  </ItemGroup>
+</Project>
