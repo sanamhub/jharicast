@@ -1,4 +1,10 @@
 #nullable enable
+Jharicast.Routing.DistrictResolver
+Jharicast.Routing.DistrictResolver.DistrictResolver() -> void
+Jharicast.Routing.DistrictResolver.DistrictsCrossed(Jharicast.Routing.SampledRoute! route) -> System.Collections.Generic.IReadOnlyList<string!>!
+Jharicast.Routing.DistrictResolver.Resolve(Jharicast.GeoPoint point) -> string?
+Jharicast.Routing.DistrictResolver.ToleranceKm.get -> double
+Jharicast.Routing.DistrictResolver.ToleranceKm.init -> void
 Jharicast.Routing.IRouteProvider
 Jharicast.Routing.IRouteProvider.GetRouteAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! waypoints, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Routing.RouteGeometry!>!
 Jharicast.Routing.OsrmRouteProvider
@@ -57,6 +63,7 @@ override Jharicast.Routing.RouteSample.ToString() -> string!
 override Jharicast.Routing.SampledRoute.Equals(object? obj) -> bool
 override Jharicast.Routing.SampledRoute.GetHashCode() -> int
 override Jharicast.Routing.SampledRoute.ToString() -> string!
+static Jharicast.Routing.DistrictResolver.DistrictIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
 static Jharicast.Routing.RouteGeometry.operator !=(Jharicast.Routing.RouteGeometry? left, Jharicast.Routing.RouteGeometry? right) -> bool
 static Jharicast.Routing.RouteGeometry.operator ==(Jharicast.Routing.RouteGeometry? left, Jharicast.Routing.RouteGeometry? right) -> bool
 static Jharicast.Routing.RouteSample.operator !=(Jharicast.Routing.RouteSample? left, Jharicast.Routing.RouteSample? right) -> bool
