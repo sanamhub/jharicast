@@ -1,1 +1,22 @@
 #nullable enable
+Jharicast.Routing.IRouteProvider
+Jharicast.Routing.IRouteProvider.GetRouteAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! waypoints, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Routing.RouteGeometry!>!
+Jharicast.Routing.OsrmRouteProvider
+Jharicast.Routing.OsrmRouteProvider.GetRouteAsync(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! waypoints, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Routing.RouteGeometry!>!
+Jharicast.Routing.OsrmRouteProvider.OsrmRouteProvider(System.Net.Http.HttpClient! httpClient, System.Uri! baseAddress) -> void
+Jharicast.Routing.RouteGeometry
+Jharicast.Routing.RouteGeometry.<Clone>$() -> Jharicast.Routing.RouteGeometry!
+Jharicast.Routing.RouteGeometry.Deconstruct(out System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! Points, out double DistanceKm, out System.TimeSpan Duration) -> void
+Jharicast.Routing.RouteGeometry.DistanceKm.get -> double
+Jharicast.Routing.RouteGeometry.DistanceKm.init -> void
+Jharicast.Routing.RouteGeometry.Duration.get -> System.TimeSpan
+Jharicast.Routing.RouteGeometry.Duration.init -> void
+Jharicast.Routing.RouteGeometry.Equals(Jharicast.Routing.RouteGeometry? other) -> bool
+Jharicast.Routing.RouteGeometry.Points.get -> System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>!
+Jharicast.Routing.RouteGeometry.Points.init -> void
+Jharicast.Routing.RouteGeometry.RouteGeometry(System.Collections.Generic.IReadOnlyList<Jharicast.GeoPoint>! Points, double DistanceKm, System.TimeSpan Duration) -> void
+override Jharicast.Routing.RouteGeometry.Equals(object? obj) -> bool
+override Jharicast.Routing.RouteGeometry.GetHashCode() -> int
+override Jharicast.Routing.RouteGeometry.ToString() -> string!
+static Jharicast.Routing.RouteGeometry.operator !=(Jharicast.Routing.RouteGeometry? left, Jharicast.Routing.RouteGeometry? right) -> bool
+static Jharicast.Routing.RouteGeometry.operator ==(Jharicast.Routing.RouteGeometry? left, Jharicast.Routing.RouteGeometry? right) -> bool

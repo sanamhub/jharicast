@@ -1,0 +1,57 @@
+{
+  "code": "Ok",
+  "routes": [
+    {
+      "distance": 90.0,
+      "duration": 300.0,
+      "weight": 300.0,
+      "weight_name": "duration",
+      "geometry": "_gjaR__f{cF?_ibE?_ibE?_ibE",
+      "legs": [
+        {
+          "distance": 30.0,
+          "duration": 100.0,
+          "steps": [],
+          "summary": "",
+          "weight": 100.0
+        },
+        {
+          "distance": 60.0,
+          "duration": 200.0,
+          "steps": [],
+          "summary": "",
+          "weight": 200.0
+        }
+      ]
+    }
+  ],
+  "waypoints": [
+    {
+      "hint": "",
+      "distance": 0,
+      "name": "",
+      "location": [
+        120.0,
+        10.0
+      ]
+    },
+    {
+      "hint": "",
+      "distance": 0,
+      "name": "",
+      "location": [
+        120.1,
+        10.0
+      ]
+    },
+    {
+      "hint": "",
+      "distance": 0,
+      "name": "",
+      "location": [
+        120.3,
+        10.0
+      ]
+    }
+  ]
+}
