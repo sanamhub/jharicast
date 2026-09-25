@@ -18,7 +18,13 @@ Jharicast.Fetch.PoliteHttpOptions.TimeProvider.get -> System.TimeProvider!
 Jharicast.Fetch.PoliteHttpOptions.TimeProvider.init -> void
 Jharicast.Fetch.PoliteHttpOptions.UserAgent.get -> string!
 Jharicast.Fetch.PoliteHttpOptions.UserAgent.init -> void
+Jharicast.Fetch.RobotsPolicy
+Jharicast.Fetch.RobotsPolicy.IsAllowed(string! productToken, string! pathAndQuery) -> bool
+Jharicast.Fetch.RobotsPolicy.MinInterval(string! productToken) -> System.TimeSpan?
 Jharicast.Fetch.SourceUnavailableException
 Jharicast.Fetch.SourceUnavailableException.SourceUnavailableException() -> void
 Jharicast.Fetch.SourceUnavailableException.SourceUnavailableException(string! message) -> void
 Jharicast.Fetch.SourceUnavailableException.SourceUnavailableException(string! message, System.Exception! innerException) -> void
+static Jharicast.Fetch.RobotsPolicy.AllowAll.get -> Jharicast.Fetch.RobotsPolicy!
+static Jharicast.Fetch.RobotsPolicy.DisallowAll.get -> Jharicast.Fetch.RobotsPolicy!
+static Jharicast.Fetch.RobotsPolicy.Parse(string! content) -> Jharicast.Fetch.RobotsPolicy!

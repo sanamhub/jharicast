@@ -34,9 +34,10 @@ public sealed class PoliteHttpHandlerTests
         using var client = new HttpClient(new PoliteHttpHandler(Options(), server));
         client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
 
-        using var response = await client.GetAsync(new Uri("https://a.example/data"), TestContext.Current.CancellationToken);
+        using var response = await _time.Drive(client.GetAsync(new Uri("https://a.example/data"), TestContext.Current.CancellationToken));
 
         Assert.Equal(UserAgent, server.Seen.Single().UserAgent);
+        Assert.Equal(UserAgent, server.RobotsSeen.Single().UserAgent);
     }
 
     // AC-3.5: never two requests in flight to one host.
@@ -58,6 +59,8 @@ public sealed class PoliteHttpHandlerTests
 
         var first = client.GetAsync(new Uri("https://a.example/1"), ct);
         var second = client.GetAsync(new Uri("https://a.example/2"), ct);
+        await _time.DriveUntil(() => server.Count == 1);
+        _time.Advance(TimeSpan.FromSeconds(10));
         await Task.Delay(50, ct);
         Assert.Equal(1, server.Count); // the second waits while the first is in flight
 
@@ -104,7 +107,7 @@ public sealed class PoliteHttpHandlerTests
         using var client = new HttpClient(new PoliteHttpHandler(Options(), server));
         var ct = TestContext.Current.CancellationToken;
 
-        var responses = await Task.WhenAll(client.GetAsync(new Uri("https://a.example/"), ct), client.GetAsync(new Uri("https://b.example/"), ct));
+        var responses = await _time.Drive(Task.WhenAll(client.GetAsync(new Uri("https://a.example/"), ct), client.GetAsync(new Uri("https://b.example/"), ct)));
 
         Assert.All(responses, r => Assert.Equal(HttpStatusCode.OK, r.StatusCode));
         Assert.Equal(2, server.MaxInFlight);
@@ -223,6 +226,7 @@ public sealed class PoliteHttpHandlerTests
 
         await Assert.ThrowsAsync<SourceUnavailableException>(() => client.GetAsync(new Uri("https://off.example/"), TestContext.Current.CancellationToken));
         Assert.Equal(0, server.Count);
+        Assert.Empty(server.RobotsSeen);
     }
 
     [Fact]
@@ -232,7 +236,7 @@ public sealed class PoliteHttpHandlerTests
         using var client = new HttpClient(new PoliteHttpHandler(Options(), server));
         var ct = TestContext.Current.CancellationToken;
 
-        using var head = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, new Uri("https://a.example/")), ct);
+        using var head = await _time.Drive(client.SendAsync(new HttpRequestMessage(HttpMethod.Head, new Uri("https://a.example/")), ct));
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.PostAsync(new Uri("https://b.example/"), new StringContent("x"), ct));
 
         Assert.Equal(1, server.Count);

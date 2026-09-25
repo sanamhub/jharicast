@@ -3,9 +3,10 @@ using System;
 namespace Jharicast.Fetch;
 
 /// <summary>
-/// A request was refused before it left the process: the host is disabled by configuration, or
-/// its circuit breaker is open after repeated failures (ADR-0007). Callers report the source as
-/// failing or disabled; they must not retry around it.
+/// A request was refused before it left the process: the host is disabled by configuration, its
+/// robots.txt disallows the path or could not be read, or its circuit breaker is open after
+/// repeated failures (ADR-0007). Callers report the source as failing or disabled; they must not
+/// retry around it.
 /// </summary>
 public sealed class SourceUnavailableException : Exception
 {

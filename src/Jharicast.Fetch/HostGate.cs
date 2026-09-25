@@ -6,20 +6,23 @@ namespace Jharicast.Fetch;
 
 /// <summary>
 /// One host's traffic state: a single slot, so one request is in flight at a time; the earliest
-/// time the next request may start; and the circuit breaker count. Every field is read and
-/// written only while the slot is held.
+/// time the next request may start; and the circuit breaker count. The times and the count are
+/// read and written only while the slot is held; the interval is atomic because robots.txt can
+/// raise it from outside the slot.
 /// </summary>
 internal sealed class HostGate(string host, TimeSpan interval, TimeProvider time) : IDisposable
 {
     private readonly SemaphoreSlim _slot = new(1, 1);
-    private DateTimeOffset _notBefore = DateTimeOffset.MinValue;
+    private DateTimeOffset _lastEnd = DateTimeOffset.MinValue;
+    private DateTimeOffset _deferredUntil = DateTimeOffset.MinValue;
     private DateTimeOffset _openUntil = DateTimeOffset.MinValue;
     private int _failures;
+    private long _intervalTicks = interval.Ticks;
 
     public string Host { get; } = host;
 
-    /// <summary>Minimum gap after a request ends.</summary>
-    public TimeSpan Interval { get; } = interval;
+    /// <summary>Minimum gap after a request ends. Only ever raised.</summary>
+    public TimeSpan Interval => TimeSpan.FromTicks(Interlocked.Read(ref _intervalTicks));
 
     /// <summary>Waits for the slot and then for the host's interval. The caller must call <see cref="Exit"/>.</summary>
     public async Task EnterAsync(CancellationToken cancellationToken)
@@ -27,7 +30,11 @@ internal sealed class HostGate(string host, TimeSpan interval, TimeProvider time
         await _slot.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var wait = _notBefore - time.GetUtcNow();
+            // The interval is read here, not when the last request ended, so a Crawl-delay learnt
+            // in between applies to the very next request.
+            var interval = Interval;
+            var earliest = _lastEnd == DateTimeOffset.MinValue ? _deferredUntil : Later(_lastEnd + interval, _deferredUntil);
+            var wait = earliest - time.GetUtcNow();
             if (wait > TimeSpan.Zero)
             {
                 await Task.Delay(wait, time, cancellationToken).ConfigureAwait(false);
@@ -66,15 +73,32 @@ internal sealed class HostGate(string host, TimeSpan interval, TimeProvider time
                 break;
         }
 
-        var next = now + Interval;
-        _notBefore = notBefore is { } extra && extra > next ? extra : next;
+        _lastEnd = now;
+        _deferredUntil = notBefore ?? DateTimeOffset.MinValue;
         _slot.Release();
+    }
+
+    /// <summary>Raises the interval, for example to a robots.txt Crawl-delay. A shorter value is ignored.</summary>
+    public void RaiseInterval(TimeSpan interval)
+    {
+        long current;
+        do
+        {
+            current = Interlocked.Read(ref _intervalTicks);
+            if (interval.Ticks <= current)
+            {
+                return;
+            }
+        }
+        while (Interlocked.CompareExchange(ref _intervalTicks, interval.Ticks, current) != current);
     }
 
     /// <summary>Frees the slot when no request was sent, leaving the times and the count as they were.</summary>
     public void Release() => _slot.Release();
 
     public void Dispose() => _slot.Dispose();
+
+    private static DateTimeOffset Later(DateTimeOffset a, DateTimeOffset b) => a > b ? a : b;
 }
 
 /// <summary>How one attempt counts toward a host's circuit breaker.</summary>
