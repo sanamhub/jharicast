@@ -18,3 +18,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `Jharicast.Nepal`, which it contains.
 - Every package carries a `PACKAGE.md`; `Jharicast.Routing`, `Jharicast.Nepal` and
   `Jharicast.Cli` carry `THIRD-PARTY-NOTICES.txt` for the data they embed.
+- Release workflow: tag, version and changelog checked first; build, test, pack, Native AOT
+  consumption and SBOMs; publish after production approval with NuGet trusted publishing.
+  `Jharicast.Nepal` and `Jharicast.Cli` stay out of nuget.org and the release page until the
+  `PUBLISH_NEPAL` repository variable is `true`.
