@@ -74,7 +74,7 @@ internal static class RouteCommand
             {
                 l.Assessment.Date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
                 Output.Invariant($"{name} ({l.DistanceKm:0}, {l.HillKm:0})"),
-                l.Input.HillRain.Deterministic.Count == 0 ? "no hill section" : ByModel(l.Input.HillRain.Deterministic),
+                l.Input.HillRain.Deterministic.Count > 0 ? ByModel(l.Input.HillRain.Deterministic) : l.HillKm == 0 ? "no hill section" : "- / - / -",
                 ByModel(l.Input.Gust.Deterministic),
                 Flag(l.Assessment),
             })]);
@@ -130,7 +130,7 @@ internal static class RouteCommand
             return $"road status unknown: dor.closures is {Output.Word(road.Status)}";
         }
 
-        if (rule.RuleId == RouteRuleSet.V1.HillRain.Id && leg.Input.HillRain.Deterministic.Count == 0)
+        if (rule.RuleId == RouteRuleSet.V1.HillRain.Id && leg.HillKm == 0)
         {
             return "no hill section on this leg";
         }

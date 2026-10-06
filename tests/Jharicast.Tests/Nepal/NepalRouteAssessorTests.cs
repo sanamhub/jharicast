@@ -180,6 +180,26 @@ public sealed class NepalRouteAssessorTests
     }
 
     [Fact]
+    public async Task Without_open_meteo_the_official_and_road_rules_still_answer_and_the_model_rules_say_unknown()
+    {
+        var time = Clock();
+        var client = new OpenMeteoClient(new HttpClient(StubHandler.Status(HttpStatusCode.ServiceUnavailable)), new OpenMeteoOptions { TimeProvider = time });
+        var warnings = new DhmWarningsSource(new HttpClient(StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json"))), new MemorySnapshotStore(), time);
+        var dor = new DorClosureSource(new HttpClient(StubHandler.Json(_ => NoClosures)), new MemorySnapshotStore(), time);
+        var osrm = new OsrmRouteProvider(new HttpClient(new StubHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(Fixtures.Read("osrm-route-birtamod-lumbini-synthetic.json")) })), new Uri("http://osrm.test/"));
+
+        var result = await new NepalRouteAssessor(client, warnings, dor, osrm, time).AssessAsync(D1(new DateOnly(2026, 9, 24)), RouteRuleSet.V1, CancellationToken.None);
+
+        var leg = Assert.Single(result.Legs);
+        Assert.All(new[] { "open-meteo.elevation", "open-meteo.forecast", "open-meteo.ensemble.ecmwf_ifs025", "open-meteo.ensemble.gfs025" }, id => Assert.Equal(SourceStatus.Failing, result.Health[id].Status));
+        Assert.Equal(leg.DistanceKm, leg.HillKm);
+        Assert.Equal(RuleStatus.Unknown, leg.Assessment.Results.Single(r => r.RuleId == RouteRuleSet.V1.HillRain.Id).Status);
+        Assert.Equal(RuleStatus.Unknown, leg.Assessment.Results.Single(r => r.RuleId == RouteRuleSet.V1.Gust.Id).Status);
+        Assert.NotEqual(RuleStatus.Unknown, leg.Assessment.Results.Single(r => r.RuleId == RouteRuleSet.V1.OfficialRuleId).Status);
+        Assert.Equal(RuleStatus.Pass, leg.Assessment.Results.Single(r => r.RuleId == RouteRuleSet.V1.RoadRuleId).Status);
+    }
+
+    [Fact]
     public async Task A_rest_day_asks_no_route_and_legs_sharing_a_road_ask_once()
     {
         var calls = new List<Uri>();

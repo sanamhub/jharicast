@@ -156,7 +156,7 @@ public sealed class RouteCommandTests
     // Open-Meteo's robots.txt is the maintainer's open question. When a host says no, the CLI
     // says so, names the host, and makes no assessment rather than one without model data.
     [Fact]
-    public async Task A_host_whose_robots_txt_disallows_us_is_reported_not_worked_around()
+    public async Task A_model_host_whose_robots_txt_disallows_us_is_reported_not_worked_around()
     {
         using var network = new FakeNetwork(host => host == "api.open-meteo.com" ? "User-agent: *\nDisallow: /\n" : null);
         var snapshots = Path.Combine(Path.GetTempPath(), "jharicast-cli-tests-" + Guid.NewGuid().ToString("N"));
@@ -164,9 +164,11 @@ public sealed class RouteCommandTests
         {
             var run = await CliRunner.Run(network, v => v == Wiring.ContactVariable ? "ops@example.org" : null, "route", "--from", "Birtamod", "--to", "Lumbini", "--date", "2026-09-28", "--snapshots", snapshots);
 
-            Assert.Equal(2, run.ExitCode);
-            Assert.Contains("robots.txt on api.open-meteo.com disallows", run.Error, StringComparison.Ordinal);
-            Assert.Contains("No assessment was made", run.Error, StringComparison.Ordinal);
+            // The official and road rules still answer; the model rules say Unknown, and the
+            // refusal is shown in the health table instead of being worked around.
+            Assert.Equal(0, run.ExitCode);
+            Assert.Contains("robots.txt on api.open-meteo.com disallows", run.Out, StringComparison.Ordinal);
+            Assert.Contains("open-meteo.forecast               model     Disabled", run.Out, StringComparison.Ordinal);
             Assert.DoesNotContain(network.Seen, r => r.RequestUri!.Host == "api.open-meteo.com" && r.RequestUri.AbsolutePath != "/robots.txt");
             Assert.All(network.Seen, r => Assert.Contains("ops@example.org", r.Headers.UserAgent.ToString(), StringComparison.Ordinal));
         }

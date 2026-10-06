@@ -73,5 +73,6 @@ public static class AssessmentDiff
         return changes;
     }
 
-    private static RuleResult Worst(LegDayAssessment a) => a.Results.OrderByDescending(r => r.Status).First();
+    // The rule that decided the overall status; enum order is not severity (Unknown is 3).
+    private static RuleResult Worst(LegDayAssessment a) => a.Results.FirstOrDefault(r => r.Status == a.Status) ?? a.Results[0];
 }

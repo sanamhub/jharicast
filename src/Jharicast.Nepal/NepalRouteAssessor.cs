@@ -109,12 +109,17 @@ public sealed class NepalRouteAssessor
     /// <param name="route">The route. Every leg's date must be between today and 15 days from today, Nepal time.</param>
     /// <param name="rules">The rules, normally <see cref="RouteRuleSet.V1"/>.</param>
     /// <param name="cancellationToken">Cancels the fetches.</param>
-    /// <returns>One entry per leg, with the health of every input. A failing DHM or DoR source is reported in the health, not thrown.</returns>
+    /// <returns>
+    /// One entry per leg, with the health of every input. A failing DHM, DoR, elevation, forecast
+    /// or ensemble source is reported in the health, not thrown, and the rules that read it say
+    /// <see cref="RuleStatus.Unknown"/>. Without elevations every sample counts as hill, the
+    /// cautious reading of rule 3.
+    /// </returns>
     /// <exception cref="ArgumentNullException">An argument is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">A leg is dated before today or more than 15 days ahead, where there is no forecast.</exception>
-    /// <exception cref="SourceUnavailableException">The router or Open-Meteo was refused before sending: disabled, robots.txt, or an open breaker. Without them there is nothing to assess.</exception>
-    /// <exception cref="System.Net.Http.HttpRequestException">The router or Open-Meteo failed.</exception>
-    /// <exception cref="System.Text.Json.JsonException">The router or Open-Meteo answered in an unexpected shape.</exception>
+    /// <exception cref="SourceUnavailableException">The router was refused before sending. Without a route there is nothing to assess.</exception>
+    /// <exception cref="System.Net.Http.HttpRequestException">The router failed.</exception>
+    /// <exception cref="System.Text.Json.JsonException">The router answered in an unexpected shape.</exception>
     /// <exception cref="InvalidOperationException">The router found no route.</exception>
     public async Task<NepalRouteAssessment> AssessAsync(Route route, RouteRuleSet rules, CancellationToken cancellationToken)
     {
@@ -152,28 +157,43 @@ public sealed class NepalRouteAssessor
                 var geometry = waypoints.Length == 2 && waypoints[0] == waypoints[1]
                     ? new RouteGeometry([leg.From], 0, TimeSpan.Zero)
                     : await _routing.GetRouteAsync(waypoints, cancellationToken).ConfigureAwait(false);
-                samples = geometries[key] = await _sampler.SampleAsync(geometry, SampleStepKm, cancellationToken).ConfigureAwait(false);
+                samples = geometries[key] = await SampleAsync(geometry, health, cancellationToken).ConfigureAwait(false);
             }
 
             sampled.Add((leg, samples, _districts.DistrictsCrossed(samples)));
         }
 
         health[RoutingSourceId] = Fresh(now);
-        health[ElevationSourceId] = Fresh(now);
+        health.TryAdd(ElevationSourceId, Fresh(now));
 
         GeoPoint[] points = [.. sampled.SelectMany(s => s.Route.Samples.Select(p => p.Point)).Distinct()];
         var days = route.Legs.Max(l => l.Date).DayNumber - today.DayNumber + 1;
-        var forecast = await _openMeteo.GetDailyAsync(points, DeterministicModels, [RainVariable, GustVariable], days, cancellationToken).ConfigureAwait(false);
-        health[ForecastSourceId] = Fresh(now);
-        provenance.AddRange(forecast.Values.Select(v => v[0].Provenance).OfType<Provenance>());
+        IReadOnlyDictionary<string, IReadOnlyList<ForecastDaily>> forecast = new Dictionary<string, IReadOnlyList<ForecastDaily>>(StringComparer.Ordinal);
+        try
+        {
+            forecast = await _openMeteo.GetDailyAsync(points, DeterministicModels, [RainVariable, GustVariable], days, cancellationToken).ConfigureAwait(false);
+            health[ForecastSourceId] = Fresh(now);
+            provenance.AddRange(forecast.Values.Select(v => v[0].Provenance).OfType<Provenance>());
+        }
+        catch (Exception ex) when (IsSourceFailure(ex))
+        {
+            health[ForecastSourceId] = Unavailable(ex);
+        }
 
         var ensembles = new List<IReadOnlyDictionary<string, IReadOnlyList<EnsembleDaily>>>();
         foreach (var model in EnsembleModels)
         {
-            var ensemble = await _openMeteo.GetEnsembleDailyAsync(points, model, [RainVariable, GustVariable], days, cancellationToken).ConfigureAwait(false);
-            ensembles.Add(ensemble);
-            health["open-meteo.ensemble." + model] = Fresh(now);
-            AddIf(provenance, ensemble[RainVariable][0].Provenance);
+            try
+            {
+                var ensemble = await _openMeteo.GetEnsembleDailyAsync(points, model, [RainVariable, GustVariable], days, cancellationToken).ConfigureAwait(false);
+                ensembles.Add(ensemble);
+                health["open-meteo.ensemble." + model] = Fresh(now);
+                AddIf(provenance, ensemble[RainVariable][0].Provenance);
+            }
+            catch (Exception ex) when (IsSourceFailure(ex))
+            {
+                health["open-meteo.ensemble." + model] = Unavailable(ex);
+            }
         }
 
         var index = points.Select((p, i) => (p, i)).ToDictionary(x => x.p, x => x.i);
@@ -189,7 +209,11 @@ public sealed class NepalRouteAssessor
                 OfficialLevels(warnings.Value, districtIds, leg.Date, today),
                 inForce.Count > 0,
                 Sample(forecast, ensembles, RainVariable, hillPoints, leg.Date),
-                Sample(forecast, ensembles, GustVariable, legPoints, leg.Date));
+                Sample(forecast, ensembles, GustVariable, legPoints, leg.Date))
+            {
+                OfficialKnown = warnings.Value is not null || leg.Date.DayNumber - today.DayNumber >= OfficialHorizonDays,
+                RoadKnown = closures.Value is not null,
+            };
             legs.Add(new NepalLegDay(rules.Evaluate(input), input, samples.DistanceKm, samples.HillKm, [.. districtIds.Select(Gazetteer.ById)], inForce));
         }
 
@@ -197,6 +221,44 @@ public sealed class NepalRouteAssessor
     }
 
     private static SourceHealth Fresh(DateTimeOffset now) => new(SourceStatus.Fresh, null, now);
+
+    // What a model or elevation source can fail with: refused before sending, a failed request or
+    // timeout, or an answer in an unexpected shape. Cancellation by the caller is not one of them.
+    private static bool IsSourceFailure(Exception ex) =>
+        ex is SourceUnavailableException or System.Net.Http.HttpRequestException or System.Text.Json.JsonException
+        || ex is TaskCanceledException { InnerException: TimeoutException };
+
+    private static SourceHealth Unavailable(Exception ex) =>
+        new(ex is SourceUnavailableException ? SourceStatus.Disabled : SourceStatus.Failing, ex.Message, null);
+
+    // Elevations are asked for until the first failure in this assessment. Without them the
+    // samples come from the geometry alone and every one counts as hill, so rule 3 reads rain
+    // along the whole route rather than missing a hill section.
+    private async Task<SampledRoute> SampleAsync(RouteGeometry geometry, Dictionary<string, SourceHealth> health, CancellationToken cancellationToken)
+    {
+        if (!health.ContainsKey(ElevationSourceId))
+        {
+            try
+            {
+                return await _sampler.SampleAsync(geometry, SampleStepKm, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (IsSourceFailure(ex))
+            {
+                health[ElevationSourceId] = Unavailable(ex);
+            }
+        }
+
+        var points = Geo.Resample(geometry.Points, SampleStepKm);
+        var samples = new List<RouteSample>(points.Count);
+        var km = 0.0;
+        for (var i = 0; i < points.Count; i++)
+        {
+            km += i == 0 ? 0 : Geo.DistanceKm(points[i - 1], points[i]);
+            samples.Add(new RouteSample(points[i], km, double.NaN, IsHill: true));
+        }
+
+        return new SampledRoute(samples, km, km);
+    }
 
     private static void AddIf(List<Provenance> list, Provenance? provenance)
     {
@@ -261,8 +323,13 @@ public sealed class NepalRouteAssessor
         var deterministic = new Dictionary<string, double>(StringComparer.Ordinal);
         foreach (var model in DeterministicModels)
         {
+            if (!forecast.TryGetValue(model, out var series))
+            {
+                continue;
+            }
+
             var values = points
-                .Select(i => forecast[model][i])
+                .Select(i => series[i])
                 .Select(f => (Day: IndexOf(f.Days, date), f))
                 .Where(x => x.Day >= 0 && x.f.Variables.TryGetValue(variable, out var v) && v[x.Day].HasValue)
                 .Select(x => x.f.Variables[variable][x.Day]!.Value)
@@ -295,7 +362,7 @@ public sealed class NepalRouteAssessor
             }
         }
 
-        return new ModelSample(deterministic, worst);
+        return new ModelSample(deterministic, worst) { Known = forecast.Count > 0 || ensembles.Count > 0 };
     }
 
     private static int IndexOf(IReadOnlyList<DateOnly> days, DateOnly date)

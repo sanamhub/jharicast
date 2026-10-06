@@ -16,6 +16,12 @@ public enum RuleStatus
 
     /// <summary>The rule is broken.</summary>
     Breach = 2,
+
+    /// <summary>
+    /// No data to decide: the source the rule reads did not answer. Never read as clear. Ranks
+    /// below Watch and Breach and above Pass when rules are combined (<see cref="RouteRuleSet.Worst"/>).
+    /// </summary>
+    Unknown = 3,
 }
 
 /// <summary>
@@ -24,7 +30,14 @@ public enum RuleStatus
 /// </summary>
 /// <param name="Deterministic">Day maximum per model id, for example <c>ecmwf_ifs025</c> 23.0.</param>
 /// <param name="Members">Ensemble members at the worst point, or empty.</param>
-public sealed record ModelSample(IReadOnlyDictionary<string, double> Deterministic, IReadOnlyList<double?> Members);
+public sealed record ModelSample(IReadOnlyDictionary<string, double> Deterministic, IReadOnlyList<double?> Members)
+{
+    /// <summary>
+    /// False when no model answered, so the rule cannot decide and says <see cref="RuleStatus.Unknown"/>.
+    /// An empty sample that is known (a route with no hill section, for rain) passes. Default true.
+    /// </summary>
+    public bool Known { get; init; } = true;
+}
 
 /// <summary>
 /// A threshold rule of the report's section 7.1 (hill rain over 64 mm, gusts over 40 km/h).
@@ -58,6 +71,11 @@ public sealed record ThresholdRule(string Id, double Threshold)
     public RuleResult Evaluate(ModelSample sample)
     {
         ArgumentNullException.ThrowIfNull(sample);
+        if (!sample.Known)
+        {
+            return new(Id, RuleStatus.Unknown, "no model data");
+        }
+
         var worst = sample.Deterministic.Count == 0 ? default : sample.Deterministic.MaxBy(kv => kv.Value);
         var probability = sample.Members.Any(m => m.HasValue) ? EnsembleStats.Exceedance(sample.Members, Threshold) : 0;
 
@@ -106,12 +124,19 @@ public sealed record LegDayInput(
     IReadOnlyDictionary<string, AlertLevel> OfficialLevels,
     bool RoadBlocked,
     ModelSample HillRain,
-    ModelSample Gust);
+    ModelSample Gust)
+{
+    /// <summary>False when the official warnings could not be read for this day; rule 1 is then unknown, not clear. Default true.</summary>
+    public bool OfficialKnown { get; init; } = true;
+
+    /// <summary>False when the road closures could not be read; rule 2 is then unknown, not open. Default true.</summary>
+    public bool RoadKnown { get; init; } = true;
+}
 
 /// <summary>What the rules say for one leg on one day.</summary>
 /// <param name="LegId">Leg id.</param>
 /// <param name="Date">Date.</param>
-/// <param name="Status">Worst rule status.</param>
+/// <param name="Status">Worst rule status, by <see cref="RouteRuleSet.Worst"/>.</param>
 /// <param name="Results">Every rule's result, in rule order.</param>
 public sealed record LegDayAssessment(string LegId, DateOnly Date, RuleStatus Status, IReadOnlyList<RuleResult> Results);
 
@@ -149,14 +174,48 @@ public sealed record RouteRuleSet
                 ? new(OfficialRuleId, RuleStatus.Breach, $"official {official} in {worstDistrict.Key}")
                 : official == AlertLevel.Yellow
                     ? new(OfficialRuleId, RuleStatus.Watch, $"official Yellow in {worstDistrict.Key}")
-                    : new(OfficialRuleId, RuleStatus.Pass, "no official warning"),
+                    : input.OfficialKnown
+                        ? new(OfficialRuleId, RuleStatus.Pass, "no official warning")
+                        : new(OfficialRuleId, RuleStatus.Unknown, "official warnings unavailable"),
             input.RoadBlocked
                 ? new(RoadRuleId, RuleStatus.Breach, "road blocked")
-                : new(RoadRuleId, RuleStatus.Pass, "open"),
+                : input.RoadKnown
+                    ? new(RoadRuleId, RuleStatus.Pass, "open")
+                    : new(RoadRuleId, RuleStatus.Unknown, "road closures unavailable"),
             HillRain.Evaluate(input.HillRain),
             Gust.Evaluate(input.Gust),
         ];
 
-        return new(input.LegId, input.Date, results.Max(r => r.Status), results);
+        return new(input.LegId, input.Date, Worst(results.Select(r => r.Status)), results);
     }
+
+    /// <summary>
+    /// The combined status: Breach, then Watch, then Unknown, then Pass. A known problem outranks
+    /// missing data, and missing data outranks clear.
+    /// </summary>
+    /// <param name="statuses">Rule statuses.</param>
+    /// <returns>The worst; Pass for none.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="statuses"/> is null.</exception>
+    public static RuleStatus Worst(IEnumerable<RuleStatus> statuses)
+    {
+        ArgumentNullException.ThrowIfNull(statuses);
+        var worst = RuleStatus.Pass;
+        foreach (var status in statuses)
+        {
+            if (Rank(status) > Rank(worst))
+            {
+                worst = status;
+            }
+        }
+
+        return worst;
+    }
+
+    private static int Rank(RuleStatus status) => status switch
+    {
+        RuleStatus.Breach => 3,
+        RuleStatus.Watch => 2,
+        RuleStatus.Unknown => 1,
+        _ => 0,
+    };
 }

@@ -266,3 +266,11 @@ static Jharicast.TimeWindow.operator !=(Jharicast.TimeWindow? left, Jharicast.Ti
 static Jharicast.TimeWindow.operator ==(Jharicast.TimeWindow? left, Jharicast.TimeWindow? right) -> bool
 ~override Jharicast.GeoPoint.Equals(object obj) -> bool
 ~override Jharicast.GeoPoint.ToString() -> string
+Jharicast.RuleStatus.Unknown = 3 -> Jharicast.RuleStatus
+Jharicast.LegDayInput.OfficialKnown.get -> bool
+Jharicast.LegDayInput.OfficialKnown.init -> void
+Jharicast.LegDayInput.RoadKnown.get -> bool
+Jharicast.LegDayInput.RoadKnown.init -> void
+static Jharicast.RouteRuleSet.Worst(System.Collections.Generic.IEnumerable<Jharicast.RuleStatus>! statuses) -> Jharicast.RuleStatus
+Jharicast.ModelSample.Known.get -> bool
+Jharicast.ModelSample.Known.init -> void

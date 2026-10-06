@@ -112,4 +112,34 @@ public sealed class CoreRuleTests
             CultureInfo.CurrentCulture = original;
         }
     }
+
+    [Fact]
+    public void A_model_rule_without_data_is_unknown_and_an_empty_known_sample_passes()
+    {
+        var empty = new ModelSample(new Dictionary<string, double>(), []);
+
+        Assert.Equal(RuleStatus.Unknown, ThresholdRule.HillRain.Evaluate(empty with { Known = false }).Status);
+        Assert.Equal(RuleStatus.Pass, ThresholdRule.HillRain.Evaluate(empty).Status);
+    }
+
+    [Fact]
+    public void Missing_official_or_road_data_is_unknown_not_clear()
+    {
+        var clear = new ModelSample(new Dictionary<string, double> { ["ecmwf_ifs025"] = 1 }, []);
+        var input = new LegDayInput("L1", new DateOnly(2026, 9, 28), new Dictionary<string, AlertLevel>(), false, clear, clear);
+
+        var assessment = RouteRuleSet.V1.Evaluate(input with { OfficialKnown = false, RoadKnown = false });
+
+        Assert.Equal(RuleStatus.Unknown, assessment.Status);
+        Assert.Equal([RuleStatus.Unknown, RuleStatus.Unknown, RuleStatus.Pass, RuleStatus.Pass], assessment.Results.Select(r => r.Status));
+        Assert.Equal(RuleStatus.Breach, RouteRuleSet.V1.Evaluate(input with { OfficialKnown = false, RoadBlocked = true }).Status);
+    }
+
+    [Theory]
+    [InlineData(new[] { RuleStatus.Pass, RuleStatus.Unknown }, RuleStatus.Unknown)]
+    [InlineData(new[] { RuleStatus.Unknown, RuleStatus.Watch }, RuleStatus.Watch)]
+    [InlineData(new[] { RuleStatus.Unknown, RuleStatus.Breach, RuleStatus.Watch }, RuleStatus.Breach)]
+    [InlineData(new RuleStatus[0], RuleStatus.Pass)]
+    public void Worst_ranks_breach_then_watch_then_unknown_then_pass(RuleStatus[] statuses, RuleStatus expected) =>
+        Assert.Equal(expected, RouteRuleSet.Worst(statuses));
 }

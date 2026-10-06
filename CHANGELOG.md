@@ -7,6 +7,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `RuleStatus.Unknown`: a rule whose source did not answer says so instead of passing.
+  `RouteRuleSet.Worst` ranks Breach, Watch, Unknown, Pass. `ModelSample.Known`,
+  `LegDayInput.OfficialKnown` and `LegDayInput.RoadKnown` carry what is missing.
+- `NepalRouteAssessor` keeps going when Open-Meteo's elevation, forecast or ensemble endpoints
+  fail or are refused: the failure goes into the health, the model rules say Unknown, and the
+  official and road rules still answer. Without elevations every sample counts as hill.
 - `NepalRouteAssessor` in `Jharicast.Nepal`: per leg and day, the four trip rules over DHM's
   current warnings, DoR closures within 2 km of the road, and Open-Meteo day maxima and pooled
   ECMWF ENS and GEFS members along the route, with the health and provenance of every input.
