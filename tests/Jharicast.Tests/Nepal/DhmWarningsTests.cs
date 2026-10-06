@@ -66,6 +66,23 @@ public sealed class DhmWarningsSourceTests
 {
     private static readonly DateTimeOffset Start = new(2026, 9, 24, 17, 0, 0, TimeSpan.Zero);
 
+    // Retired on 2026-10-06: the feed stopped updating, and a frozen Orange read as current.
+    [Fact]
+    public async Task By_default_the_retired_feed_sends_no_request_and_reports_disabled()
+    {
+        var stub = StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json"));
+        var store = new MemorySnapshotStore();
+        using var http = new HttpClient(stub);
+
+        var result = await new DhmWarningsSource(http, store, new FakeTimeProvider(Start)).FetchAsync(TestContext.Current.CancellationToken);
+
+        Assert.Equal(SourceStatus.Disabled, result.Health.Status);
+        Assert.Equal(DhmWarningsSource.RetiredDetail, result.Health.Detail);
+        Assert.Null(result.Value);
+        Assert.Empty(stub.Seen);
+        Assert.Empty(store.Saved);
+    }
+
     [Fact]
     public async Task First_fetch_is_fresh_stored_and_official()
     {
@@ -73,7 +90,7 @@ public sealed class DhmWarningsSourceTests
         var store = new MemorySnapshotStore();
         using var http = new HttpClient(StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json")));
 
-        var result = await new DhmWarningsSource(http, store, time).FetchAsync(TestContext.Current.CancellationToken);
+        var result = await new DhmWarningsSource(http, store, time) { Retired = false }.FetchAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(SourceStatus.Fresh, result.Health.Status);
         Assert.Equal(Start, result.Health.LastChangeAt);
@@ -91,7 +108,7 @@ public sealed class DhmWarningsSourceTests
         var time = new FakeTimeProvider(Start);
         var store = new MemorySnapshotStore();
         using var http = new HttpClient(StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json")));
-        var source = new DhmWarningsSource(http, store, time);
+        var source = new DhmWarningsSource(http, store, time) { Retired = false };
         var token = TestContext.Current.CancellationToken;
 
         await source.FetchAsync(token);
@@ -115,7 +132,7 @@ public sealed class DhmWarningsSourceTests
         using var http = new HttpClient(StubHandler.Json(n => n == 0
             ? """{"real_result":{"rain_fall":[]}}"""u8.ToArray()
             : """{"real_result":{"rain_fall":[{"level_id":"3","area_name":"Jhapa"}]}}"""u8.ToArray()));
-        var source = new DhmWarningsSource(http, store, time);
+        var source = new DhmWarningsSource(http, store, time) { Retired = false };
         var token = TestContext.Current.CancellationToken;
 
         await source.FetchAsync(token);
@@ -132,7 +149,7 @@ public sealed class DhmWarningsSourceTests
     {
         using var http = new HttpClient(StubHandler.Json(_ => """{"real_result":{"rain_fall":[{"level_id":"3","area_name":"Atlantis"}]}}"""u8.ToArray()));
 
-        var result = await new DhmWarningsSource(http, new MemorySnapshotStore(), new FakeTimeProvider(Start)).FetchAsync(TestContext.Current.CancellationToken);
+        var result = await new DhmWarningsSource(http, new MemorySnapshotStore(), new FakeTimeProvider(Start)) { Retired = false }.FetchAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(SourceStatus.Drifting, result.Health.Status);
         Assert.Contains("district:Atlantis", result.Health.Detail, StringComparison.Ordinal);
@@ -145,7 +162,7 @@ public sealed class DhmWarningsSourceTests
         var store = new MemorySnapshotStore();
         using var http = new HttpClient(StubHandler.Json(_ => "<html>maintenance</html>"u8.ToArray()));
 
-        var result = await new DhmWarningsSource(http, store, new FakeTimeProvider(Start)).FetchAsync(TestContext.Current.CancellationToken);
+        var result = await new DhmWarningsSource(http, store, new FakeTimeProvider(Start)) { Retired = false }.FetchAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(SourceStatus.Failing, result.Health.Status);
         Assert.Null(result.Value);
@@ -158,7 +175,7 @@ public sealed class DhmWarningsSourceTests
         var store = new MemorySnapshotStore();
         using var http = new HttpClient(StubHandler.Status(HttpStatusCode.ServiceUnavailable));
 
-        var result = await new DhmWarningsSource(http, store, new FakeTimeProvider(Start)).FetchAsync(TestContext.Current.CancellationToken);
+        var result = await new DhmWarningsSource(http, store, new FakeTimeProvider(Start)) { Retired = false }.FetchAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(SourceStatus.Failing, result.Health.Status);
         Assert.Contains("503", result.Health.Detail, StringComparison.Ordinal);
@@ -175,7 +192,7 @@ public sealed class DhmWarningsSourceTests
         options.DisabledHosts.Add(DhmWarningsSource.DefaultUrl.Host);
         using var http = new HttpClient(new PoliteHttpHandler(options, stub));
 
-        var result = await new DhmWarningsSource(http, new MemorySnapshotStore(), new FakeTimeProvider(Start)).FetchAsync(TestContext.Current.CancellationToken);
+        var result = await new DhmWarningsSource(http, new MemorySnapshotStore(), new FakeTimeProvider(Start)) { Retired = false }.FetchAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(SourceStatus.Disabled, result.Health.Status);
         Assert.Empty(stub.Seen);

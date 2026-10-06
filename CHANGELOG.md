@@ -5,7 +5,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** `DhmWarningsSource` is retired by default. It sends no request, reports
+  `Disabled`, and the official rule says Unknown. On 2026-10-06 the feed's `real_result` was
+  identical to the copy saved on 2026-09-24 and still listed 19 Orange districts, while DHM's
+  map for that day had none. Set `Retired = false` only to replay responses recorded while the
+  feed was current; `jharicast` does so for `--fixtures`.
+
+### Fixed
+
+- `DorClosureSource` reads DoR's real time fields, `date_roadblock_start`,
+  `date_roadblock_end_estimated` and `date_roadblock_end` (checked against the live feed on
+  2026-10-06). The guessed names dropped every time, so closures that had ended still counted
+  as in force and the source reported `missing:start_time` drift on every fetch.
+
 ### Added
+
+- `DhmWarningsSource.WarningsPage`: the page where DHM publishes its current warnings as maps,
+  for apps that link to the official source.
 
 - `PoliteHttpOptions.OperatedHosts`: hosts the caller runs itself, such as a self-hosted
   Open-Meteo, whose robots.txt is not read. Every other politeness rule still applies.

@@ -444,3 +444,6 @@ static Jharicast.Nepal.Town.operator ==(Jharicast.Nepal.Town? left, Jharicast.Ne
 static readonly Jharicast.Nepal.DhmBulletinSource.DefaultBaseAddress -> System.Uri!
 static readonly Jharicast.Nepal.DhmWarningsSource.DefaultUrl -> System.Uri!
 static readonly Jharicast.Nepal.DorClosureSource.DefaultUrl -> System.Uri!
+static readonly Jharicast.Nepal.DhmWarningsSource.WarningsPage -> System.Uri!
+Jharicast.Nepal.DhmWarningsSource.Retired.get -> bool
+Jharicast.Nepal.DhmWarningsSource.Retired.init -> void

@@ -67,7 +67,7 @@ public sealed class NepalRouteAssessorTests
     {
         openMeteo = new FakeOpenMeteo(new DateOnly(2026, 9, 24), Deterministic, Member, Elevation);
         var client = new OpenMeteoClient(new HttpClient(openMeteo), new OpenMeteoOptions { TimeProvider = time });
-        var warnings = new DhmWarningsSource(new HttpClient(dhm ?? StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json"))), new MemorySnapshotStore(), time);
+        var warnings = new DhmWarningsSource(new HttpClient(dhm ?? StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json"))), new MemorySnapshotStore(), time) { Retired = false };
         var dor = new DorClosureSource(new HttpClient(StubHandler.Json(_ => closures)), new MemorySnapshotStore(), time);
         var osrmHandler = new StubHandler(request =>
         {
@@ -148,13 +148,13 @@ public sealed class NepalRouteAssessorTests
     public async Task A_closure_on_the_road_blocks_the_leg_until_it_ends()
     {
         var onRoad = """
-            [{"road_refno":"H01","link_code":"H0100","closure_type":"Full","closure_reason":"Landslide","latitude":26.6915,"longitude":86.877,"start_time":"2026-09-24 06:00:00","estimated_end_time":"2026-09-25 18:00:00","end_time":null}]
+            [{"road_refno":"H01","link_code":"H0100","closure_type":"Full","closure_reason":"Landslide","latitude":26.6915,"longitude":86.877,"date_roadblock_start":"2026-09-24 06:00:00","date_roadblock_end_estimated":"2026-09-25 18:00:00","date_roadblock_end":null}]
             """u8.ToArray();
         var ended = """
-            [{"road_refno":"H01","link_code":"H0100","closure_type":"Full","closure_reason":"Landslide","latitude":26.6915,"longitude":86.877,"start_time":"2026-09-23 06:00:00","estimated_end_time":null,"end_time":"2026-09-24 07:00:00"}]
+            [{"road_refno":"H01","link_code":"H0100","closure_type":"Full","closure_reason":"Landslide","latitude":26.6915,"longitude":86.877,"date_roadblock_start":"2026-09-23 06:00:00","date_roadblock_end_estimated":null,"date_roadblock_end":"2026-09-24 07:00:00"}]
             """u8.ToArray();
         var farAway = """
-            [{"road_refno":"H13","link_code":"H1300","closure_type":"Full","closure_reason":"Landslide","latitude":29.27,"longitude":82.18,"start_time":"2026-09-24 06:00:00","estimated_end_time":null,"end_time":null}]
+            [{"road_refno":"H13","link_code":"H1300","closure_type":"Full","closure_reason":"Landslide","latitude":29.27,"longitude":82.18,"date_roadblock_start":"2026-09-24 06:00:00","date_roadblock_end_estimated":null,"date_roadblock_end":null}]
             """u8.ToArray();
         var date = new DateOnly(2026, 9, 28);
 
@@ -179,12 +179,31 @@ public sealed class NepalRouteAssessorTests
         Assert.Empty(Assert.Single(result.Legs).Input.OfficialLevels);
     }
 
+    // The retired DHM feed (DhmWarningsSource) must never read as "no official warning".
+    [Fact]
+    public async Task The_retired_dhm_feed_makes_the_official_rule_unknown()
+    {
+        var time = Clock();
+        var stub = StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json"));
+        var client = new OpenMeteoClient(new HttpClient(new FakeOpenMeteo(new DateOnly(2026, 9, 24), Deterministic, Member, Elevation)), new OpenMeteoOptions { TimeProvider = time });
+        var warnings = new DhmWarningsSource(new HttpClient(stub), new MemorySnapshotStore(), time);
+        var dor = new DorClosureSource(new HttpClient(StubHandler.Json(_ => NoClosures)), new MemorySnapshotStore(), time);
+        var osrm = new OsrmRouteProvider(new HttpClient(new StubHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(Fixtures.Read("osrm-route-birtamod-lumbini-synthetic.json")) })), new Uri("http://osrm.test/"));
+
+        var result = await new NepalRouteAssessor(client, warnings, dor, osrm, time).AssessAsync(D1(new DateOnly(2026, 9, 24)), RouteRuleSet.V1, CancellationToken.None);
+
+        var official = Assert.Single(result.Legs).Assessment.Results.Single(r => r.RuleId == RouteRuleSet.V1.OfficialRuleId);
+        Assert.Equal(RuleStatus.Unknown, official.Status);
+        Assert.Equal(SourceStatus.Disabled, result.Health["dhm.warnings"].Status);
+        Assert.Empty(stub.Seen);
+    }
+
     [Fact]
     public async Task Without_open_meteo_the_official_and_road_rules_still_answer_and_the_model_rules_say_unknown()
     {
         var time = Clock();
         var client = new OpenMeteoClient(new HttpClient(StubHandler.Status(HttpStatusCode.ServiceUnavailable)), new OpenMeteoOptions { TimeProvider = time });
-        var warnings = new DhmWarningsSource(new HttpClient(StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json"))), new MemorySnapshotStore(), time);
+        var warnings = new DhmWarningsSource(new HttpClient(StubHandler.Json(_ => Fixtures.Read("dhm-getapidata-1-2026-09-24.json"))), new MemorySnapshotStore(), time) { Retired = false };
         var dor = new DorClosureSource(new HttpClient(StubHandler.Json(_ => NoClosures)), new MemorySnapshotStore(), time);
         var osrm = new OsrmRouteProvider(new HttpClient(new StubHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(Fixtures.Read("osrm-route-birtamod-lumbini-synthetic.json")) })), new Uri("http://osrm.test/"));
 

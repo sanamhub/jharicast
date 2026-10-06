@@ -87,23 +87,35 @@ public sealed class AlertsAndSourcesTests
     [Fact]
     public async Task Sources_check_exits_1_when_an_official_source_refuses()
     {
-        var run = await Live(uri => uri.AbsolutePath == "/home/getAPIData/1" ? new HttpResponseMessage(HttpStatusCode.Forbidden) : null, out var network);
+        var run = await Live(uri => uri.AbsolutePath == ClosuresPath ? new HttpResponseMessage(HttpStatusCode.Forbidden) : null, out var network);
 
         Assert.Equal(1, run.ExitCode);
-        Assert.Contains(run.Out.Split('\n'), l => l.StartsWith("dhm.warnings ", StringComparison.Ordinal) && l.Contains("Failing", StringComparison.Ordinal) && l.Contains("HTTP 403", StringComparison.Ordinal));
-        Assert.Contains("Official sources failing or drifting: dhm.warnings", run.Out, StringComparison.Ordinal);
-        Assert.Single(network.Seen, r => r.RequestUri!.AbsolutePath == "/home/getAPIData/1");
+        Assert.Contains(run.Out.Split('\n'), l => l.StartsWith("dor.closures ", StringComparison.Ordinal) && l.Contains("Failing", StringComparison.Ordinal) && l.Contains("HTTP 403", StringComparison.Ordinal));
+        Assert.Contains("Official sources failing or drifting: dor.closures", run.Out, StringComparison.Ordinal);
+        Assert.Single(network.Seen, r => r.RequestUri!.AbsolutePath == ClosuresPath);
     }
 
     [Fact]
     public async Task Sources_check_exits_1_when_an_official_source_drifts()
     {
-        var drifted = """{"real_result":{"rain_fall":[{"area_name":"Atlantis","level_id":"3"}]}}""";
-        var run = await Live(uri => uri.AbsolutePath == "/home/getAPIData/1" ? new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(drifted) } : null, out _);
+        var drifted = """[{"road_refno":"H01","latitude":27.1,"longitude":85.0,"startDate":"2026-09-26 06:30:00"}]""";
+        var run = await Live(uri => uri.AbsolutePath == ClosuresPath ? new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(drifted) } : null, out _);
 
         Assert.Equal(1, run.ExitCode);
-        Assert.Contains("unrecognised district:Atlantis", run.Out, StringComparison.Ordinal);
+        Assert.Contains("unrecognised missing:date_roadblock_start", run.Out, StringComparison.Ordinal);
     }
+
+    // DHM's feed stopped updating (2026-10-06): a live run reports it disabled and never asks for it.
+    [Fact]
+    public async Task A_live_run_reports_the_retired_dhm_feed_and_sends_it_no_request()
+    {
+        var run = await Live(_ => null, out var network);
+
+        Assert.Contains(run.Out.Split('\n'), l => l.StartsWith("dhm.warnings ", StringComparison.Ordinal) && l.Contains("Disabled", StringComparison.Ordinal));
+        Assert.DoesNotContain(network.Seen, r => r.RequestUri!.AbsolutePath == "/home/getAPIData/1");
+    }
+
+    private const string ClosuresPath = "/api/Map_data_api/getRoadClosureMapData";
 
     // Open-Meteo's robots.txt is the open question for this round. A disallow shows as disabled,
     // with the reason, and is not a failure of the official sources.

@@ -43,9 +43,9 @@ public sealed record DorClosureSnapshot(IReadOnlyList<RoadClosure> Closures, IRe
 /// <remarks>
 /// The feed also returns the names and phone numbers of the officials to call. Every field not
 /// read here is dropped before the snapshot is made, so they are never hashed, stored or parsed
-/// (ADR-0008). Times without an offset are Nepal time and are converted to UTC. The field names
-/// are those in the research note of 2026-09-24; no live response has been committed, and the
-/// time field names are UNVERIFIED until the first fetch, which reports missing ones as drift.
+/// (ADR-0008). Times without an offset are Nepal time and are converted to UTC. The time field
+/// names were checked against the live feed on 2026-10-06; the research note's guesses
+/// (<c>start_time</c>, <c>end_time</c>) were wrong, so every closure read as never ending.
 /// </remarks>
 public sealed class DorClosureSource : ISource<DorClosureSnapshot>
 {
@@ -57,7 +57,7 @@ public sealed class DorClosureSource : ISource<DorClosureSnapshot>
 
     internal static readonly HashSet<string> Fields = new(StringComparer.Ordinal)
     {
-        "road_refno", "link_code", "closure_type", "closure_reason", "latitude", "longitude", "start_time", "estimated_end_time", "end_time",
+        "road_refno", "link_code", "closure_type", "closure_reason", "latitude", "longitude", "date_roadblock_start", "date_roadblock_end_estimated", "date_roadblock_end",
     };
 
     // No cadence is published; a day without change is stale. A guess, as for BIPAD.
@@ -116,9 +116,9 @@ public sealed class DorClosureSource : ISource<DorClosureSnapshot>
                 drift.Add("missing:location");
             }
 
-            if (!e.TryGetProperty("start_time", out _))
+            if (!e.TryGetProperty("date_roadblock_start", out _))
             {
-                drift.Add("missing:start_time");
+                drift.Add("missing:date_roadblock_start");
             }
 
             closures.Add(new RoadClosure(
@@ -127,9 +127,9 @@ public sealed class DorClosureSource : ISource<DorClosureSnapshot>
                 FeedReader.Text(e, "closure_type"),
                 FeedReader.Text(e, "closure_reason"),
                 location,
-                FeedReader.Time(e, "start_time", drift),
-                FeedReader.Time(e, "estimated_end_time", drift),
-                FeedReader.Time(e, "end_time", drift)));
+                FeedReader.Time(e, "date_roadblock_start", drift),
+                FeedReader.Time(e, "date_roadblock_end_estimated", drift),
+                FeedReader.Time(e, "date_roadblock_end", drift)));
         }
 
         return new DorClosureSnapshot(closures, [.. drift], new Provenance(SourceId, SourceKind.Official, fetchedAt));

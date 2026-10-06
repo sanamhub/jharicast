@@ -218,7 +218,7 @@ public sealed class DorClosureSourceTests
         var (result, _) = await FetchFixture("""[{"road_refno":"H01","latitude":27.1,"longitude":85.0,"startDate":"2026-09-26 06:30:00"}]"""u8.ToArray());
 
         Assert.Equal(SourceStatus.Drifting, result.Health.Status);
-        Assert.Equal(["missing:start_time"], result.Value!.Drift);
+        Assert.Equal(["missing:date_roadblock_start"], result.Value!.Drift);
     }
 
     [Fact]
