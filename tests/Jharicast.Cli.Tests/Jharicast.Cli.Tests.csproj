@@ -19,6 +19,10 @@
   <ItemGroup>
     <None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../Jharicast.Tests/Fixtures/dhm-getapidata-1-2026-09-24.json" Link="Fixtures/replay/dhm.gov.np/home/getAPIData/1.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- A live run reads DHM's warning maps. Every image path falls back to image.json, so all
+         three days get the 6 Oct day 1 map. -->
+    <None Include="../Jharicast.Tests/Fixtures/dhm-warning-maps-list-2026-10-06.json" Link="Fixtures/replay/dhm.gov.np/mfd/api/page.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../Jharicast.Tests/Fixtures/dhm-warning-map-12340-day-1.png" Link="Fixtures/replay/dhm.gov.np/mfd/api/image.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../Jharicast.Tests/Fixtures/dhm-getapidata-3-2026-09-25.json" Link="Fixtures/replay/dhm.gov.np/home/getAPIData/3.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../Jharicast.Tests/Fixtures/dhm-mfd-three-days-forecast-latest-2026-09-25.json" Link="Fixtures/replay/dhm.gov.np/mfd/api/three-days-forecast-latest.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../Jharicast.Tests/Fixtures/dhm-mfd-three-days-forecast-1578-2026-09-25.json" Link="Fixtures/replay/dhm.gov.np/mfd/api/three-days-forecast/1578.json" CopyToOutputDirectory="PreserveNewest" />

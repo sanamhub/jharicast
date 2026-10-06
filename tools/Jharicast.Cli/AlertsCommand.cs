@@ -85,9 +85,7 @@ internal static class AlertsCommand
                     .Select(x => (x.Town, Level: RainAlertRule.V1.Evaluate(x.Members!), Median: EnsembleStats.Quantile(x.Members!, 0.5), High: EnsembleStats.Quantile(x.Members!, 0.9)))
                     .OrderByDescending(x => x.Level).ThenByDescending(x => x.Median)
                     .ToArray();
-                AlertLevel? official = warnings.Value is { } w && day.DayNumber - today.DayNumber < OfficialHorizonDays
-                    ? AlertLevels.Max(Gazetteer.Districts.Where(d => d.Province == province).Select(d => w.LevelFor(d, Hazard.Rainfall)))
-                    : null;
+                AlertLevel? official = Official(warnings.Value, province, day, today);
                 cells.Add(candidates.Length == 0
                     ? new Cell(province, day, null, official, null, 0, 0)
                     : new Cell(province, day, candidates[0].Level, official, candidates[0].Town.Name, candidates[0].Median, candidates[0].High));
@@ -96,6 +94,19 @@ internal static class AlertsCommand
 
         Write(output, request, cells, health, provenance, days, today, wiring.IsReplay);
         return Cli.Done;
+    }
+
+    // The maps colour a district by its highest level for any hazard, so a dated level is not
+    // rain-only; the recorded feed names the hazard, so a replay keeps the rain level.
+    private static AlertLevel? Official(DhmWarningSnapshot? warnings, Province province, DateOnly day, DateOnly today)
+    {
+        var districts = Gazetteer.Districts.Where(d => d.Province == province);
+        return warnings switch
+        {
+            null => null,
+            { Days.Count: > 0 } w => w.Days.Contains(day) ? AlertLevels.Max(districts.Select(d => w.LevelOn(d, day))) : null,
+            { } w => day.DayNumber - today.DayNumber < OfficialHorizonDays ? AlertLevels.Max(districts.Select(d => w.LevelFor(d, Hazard.Rainfall))) : null,
+        };
     }
 
     private static void Write(TextWriter output, AlertsRequest request, List<Cell> cells, Dictionary<string, SourceHealth> health, List<Provenance> provenance, DateOnly[] days, DateOnly today, bool replay)

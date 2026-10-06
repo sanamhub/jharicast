@@ -128,8 +128,11 @@ internal sealed class Wiring : IDisposable
 
     public OpenMeteoClient OpenMeteo() => new(_http, new OpenMeteoOptions { TimeProvider = Time });
 
-    // DHM's feed is retired for live runs; a replay reads the response recorded while it was current.
-    public DhmWarningsSource Warnings() => new(_http, Store, Time) { Retired = !IsReplay };
+    // Live runs read DHM's warning maps. A replay reads the feed response recorded while the feed
+    // was current: the recorded runs predate the maps source and hold no images.
+    public ISource<DhmWarningSnapshot> Warnings() => IsReplay
+        ? new DhmWarningsSource(_http, Store, Time) { Retired = false }
+        : new DhmWarningMapSource(_http, Store, Time);
 
     public DorClosureSource Closures() => new(_http, Store, Time);
 

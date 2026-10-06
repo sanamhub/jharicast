@@ -180,6 +180,43 @@ public sealed class NepalRouteAssessorTests
     }
 
     // The retired DHM feed (DhmWarningsSource) must never read as "no official warning".
+    // The maps date each level: Jhapa Orange on 25 Sep only. 24 Sep and 26 Sep get no level, and
+    // 27 Sep, past the bulletin's last day, has no official level at all.
+    [Fact]
+    public async Task Dated_warnings_apply_to_their_own_date_only()
+    {
+        var time = Clock();
+        var jhapa = Gazetteer.Districts.Single(d => d.Id == "jhapa");
+        DateOnly[] days = [new(2026, 9, 24), new(2026, 9, 25), new(2026, 9, 26)];
+        var snapshot = new DhmWarningSnapshot(
+            [new DistrictWarning(jhapa, Hazard.Unspecified, AlertLevel.Orange) { ValidOn = days[1] }],
+            [],
+            new Provenance("dhm.warnings", SourceKind.Official, Now))
+        {
+            Days = days,
+        };
+        var client = new OpenMeteoClient(new HttpClient(new FakeOpenMeteo(new DateOnly(2026, 9, 24), Deterministic, Member, Elevation)), new OpenMeteoOptions { TimeProvider = time });
+        var dor = new DorClosureSource(new HttpClient(StubHandler.Json(_ => NoClosures)), new MemorySnapshotStore(), time);
+        var osrm = new OsrmRouteProvider(new HttpClient(new StubHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(Fixtures.Read("osrm-route-birtamod-lumbini-synthetic.json")) })), new Uri("http://osrm.test/"));
+        var assessor = new NepalRouteAssessor(client, new FixedWarnings(snapshot), dor, osrm, time);
+
+        async Task<NepalLegDay> On(DateOnly date) => Assert.Single((await assessor.AssessAsync(D1(date), RouteRuleSet.V1, CancellationToken.None)).Legs);
+
+        Assert.Empty((await On(days[0])).Input.OfficialLevels);
+        Assert.Equal(AlertLevel.Orange, (await On(days[1])).Input.OfficialLevels["jhapa"]);
+        Assert.Equal(RuleStatus.Breach, (await On(days[1])).Assessment.Results[0].Status);
+        Assert.Empty((await On(days[2])).Input.OfficialLevels);
+        var later = await On(new DateOnly(2026, 9, 27));
+        Assert.Empty(later.Input.OfficialLevels);
+        Assert.Equal("no official warning", later.Assessment.Results[0].Reason);
+    }
+
+    private sealed class FixedWarnings(DhmWarningSnapshot snapshot) : ISource<DhmWarningSnapshot>
+    {
+        public Task<SourceResult<DhmWarningSnapshot>> FetchAsync(CancellationToken cancellationToken) =>
+            Task.FromResult(new SourceResult<DhmWarningSnapshot>(snapshot, null, new SourceHealth(SourceStatus.Fresh, null, Now)));
+    }
+
     [Fact]
     public async Task The_retired_dhm_feed_makes_the_official_rule_unknown()
     {

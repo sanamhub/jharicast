@@ -10,7 +10,7 @@ namespace Jharicast.Nepal;
 /// DHM's district warnings feed, <c>dhm.gov.np/home/getAPIData/1</c> (ADR-0011,
 /// <c>dhm.warnings</c>). Retired by default: <see cref="FetchAsync"/> sends no request and
 /// reports <see cref="SourceStatus.Disabled"/>, so the official rule says Unknown instead of
-/// reading a level DHM no longer issues.
+/// reading a level DHM no longer issues. <see cref="DhmWarningMapSource"/> replaces it.
 /// </summary>
 /// <remarks>
 /// <para>

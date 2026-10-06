@@ -38,15 +38,25 @@ public enum Hazard
 
     /// <summary><c>tornado</c>.</summary>
     Tornado = 9,
+
+    /// <summary>The source gives a level but not the hazard: DHM's warning maps colour each district by its highest level only.</summary>
+    Unspecified = 10,
 }
 
 /// <summary>One current official warning.</summary>
 /// <param name="District">District.</param>
 /// <param name="Hazard">Hazard.</param>
 /// <param name="Level">Level. Never Green: the feed lists only districts under a warning.</param>
-public sealed record DistrictWarning(District District, Hazard Hazard, AlertLevel Level);
+public sealed record DistrictWarning(District District, Hazard Hazard, AlertLevel Level)
+{
+    /// <summary>The Nepal date the warning is for, or null when the source gives none and the warning is current.</summary>
+    public DateOnly? ValidOn { get; init; }
+}
 
-/// <summary>Parsed <c>dhm.gov.np/home/getAPIData/1</c>, current warnings only.</summary>
+/// <summary>
+/// DHM's district warnings: from the feed <c>dhm.gov.np/home/getAPIData/1</c>, current and
+/// undated, or from the warning maps, one date per day the bulletin covers.
+/// </summary>
 /// <param name="Warnings">Current warnings.</param>
 /// <param name="Drift">Names, hazards or levels we did not recognise. Non-empty means the feed changed: alert the maintainer.</param>
 /// <param name="Provenance">Where and when.</param>
@@ -58,6 +68,16 @@ public sealed record DhmWarningSnapshot(IReadOnlyList<DistrictWarning> Warnings,
     /// <returns>The level; Green when none.</returns>
     public AlertLevel LevelFor(District district, Hazard? hazard = null) =>
         AlertLevels.Max(Warnings.Where(w => w.District == district && (hazard is null || w.Hazard == hazard)).Select(w => w.Level));
+
+    /// <summary>Highest level for a district on one date: dated warnings for that date, and undated (current) warnings.</summary>
+    /// <param name="district">District.</param>
+    /// <param name="date">Nepal date.</param>
+    /// <returns>The level; Green when none.</returns>
+    public AlertLevel LevelOn(District district, DateOnly date) =>
+        AlertLevels.Max(Warnings.Where(w => w.District == district && (w.ValidOn is null || w.ValidOn == date)).Select(w => w.Level));
+
+    /// <summary>The dates the warnings cover, in order; empty when they are undated (the feed). A date not listed has no official level.</summary>
+    public IReadOnlyList<DateOnly> Days { get; init; } = [];
 }
 
 /// <summary>

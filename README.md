@@ -106,7 +106,7 @@ var time = TimeProvider.System;
 
 var assessor = new NepalRouteAssessor(
     new OpenMeteoClient(http, new OpenMeteoOptions()),
-    new DhmWarningsSource(http, store, time),
+    new DhmWarningMapSource(http, store, time),
     new DorClosureSource(http, store, time),
     new OsrmRouteProvider(http, new Uri("http://localhost:5000/")),
     time);

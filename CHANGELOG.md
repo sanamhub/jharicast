@@ -22,6 +22,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `DhmWarningMapSource`: DHM's district warnings read from the three-day warning maps DHM now
+  publishes instead of the feed, under the same source id `dhm.warnings`. Each district gets a
+  level per date (`DistrictWarning.ValidOn`, `DhmWarningSnapshot.Days`, `LevelOn`) from the fill
+  colour of most of its pixels; checked against 36 maps from 2026-06-29 to 2026-10-06, where each
+  district was at least 98 percent one colour. A map that cannot be read is drift and gives no
+  levels, so the official rule says Unknown rather than a wrong level. A poll is 1 request, or 4
+  when a new bulletin is out. The hazard is not on the map in a readable form, so warnings carry
+  the new `Hazard.Unspecified`. ADR-0016.
+- `NepalRouteAssessor` gives each leg the official levels for its own date when the warnings are
+  dated, and none for a date the bulletin does not cover. `jharicast` reads the maps on live runs.
+
 - `DhmWarningsSource.WarningsPage`: the page where DHM publishes its current warnings as maps,
   for apps that link to the official source.
 

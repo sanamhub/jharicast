@@ -105,13 +105,18 @@ public sealed class AlertsAndSourcesTests
         Assert.Contains("unrecognised missing:date_roadblock_start", run.Out, StringComparison.Ordinal);
     }
 
-    // DHM's feed stopped updating (2026-10-06): a live run reports it disabled and never asks for it.
+    // DHM's feed stopped updating (2026-10-06): a live run reads the warning maps instead and
+    // never asks for the feed.
     [Fact]
-    public async Task A_live_run_reports_the_retired_dhm_feed_and_sends_it_no_request()
+    public async Task A_live_run_reads_dhm_s_warning_maps_not_the_retired_feed()
     {
         var run = await Live(_ => null, out var network);
 
-        Assert.Contains(run.Out.Split('\n'), l => l.StartsWith("dhm.warnings ", StringComparison.Ordinal) && l.Contains("Disabled", StringComparison.Ordinal));
+        var line = run.Out.Split('\n').Single(l => l.StartsWith("dhm.warnings ", StringComparison.Ordinal));
+        Assert.DoesNotContain("Failing", line, StringComparison.Ordinal);
+        Assert.DoesNotContain("Drifting", line, StringComparison.Ordinal);
+        Assert.Contains(network.Seen, r => r.RequestUri!.AbsolutePath == "/mfd/api/page");
+        Assert.Equal(3, network.Seen.Count(r => r.RequestUri!.AbsolutePath.StartsWith("/mfd/api/image/", StringComparison.Ordinal)));
         Assert.DoesNotContain(network.Seen, r => r.RequestUri!.AbsolutePath == "/home/getAPIData/1");
     }
 

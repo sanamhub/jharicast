@@ -447,3 +447,14 @@ static readonly Jharicast.Nepal.DorClosureSource.DefaultUrl -> System.Uri!
 static readonly Jharicast.Nepal.DhmWarningsSource.WarningsPage -> System.Uri!
 Jharicast.Nepal.DhmWarningsSource.Retired.get -> bool
 Jharicast.Nepal.DhmWarningsSource.Retired.init -> void
+Jharicast.Nepal.DhmWarningMapSource
+Jharicast.Nepal.DhmWarningMapSource.DhmWarningMapSource(System.Net.Http.HttpClient! httpClient, Jharicast.Fetch.ISnapshotStore! store, System.TimeProvider! timeProvider, System.Uri? url = null) -> void
+Jharicast.Nepal.DhmWarningMapSource.FetchAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Jharicast.Fetch.SourceResult<Jharicast.Nepal.DhmWarningSnapshot!>!>!
+static readonly Jharicast.Nepal.DhmWarningMapSource.DefaultUrl -> System.Uri!
+static Jharicast.Nepal.DhmWarningMapSource.Parse(System.ReadOnlyMemory<byte> utf8Json, System.DateTimeOffset fetchedAt) -> Jharicast.Nepal.DhmWarningSnapshot!
+Jharicast.Nepal.Hazard.Unspecified = 10 -> Jharicast.Nepal.Hazard
+Jharicast.Nepal.DistrictWarning.ValidOn.get -> System.DateOnly?
+Jharicast.Nepal.DistrictWarning.ValidOn.init -> void
+Jharicast.Nepal.DhmWarningSnapshot.LevelOn(Jharicast.Nepal.District! district, System.DateOnly date) -> Jharicast.AlertLevel
+Jharicast.Nepal.DhmWarningSnapshot.Days.get -> System.Collections.Generic.IReadOnlyList<System.DateOnly>!
+Jharicast.Nepal.DhmWarningSnapshot.Days.init -> void

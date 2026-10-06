@@ -34,9 +34,10 @@ public sealed record NepalRouteAssessment(string RouteId, IReadOnlyList<NepalLeg
 /// </summary>
 /// <remarks>
 /// <para>
-/// DHM's feed carries current levels with no days attached. They apply to today and the next
-/// days up to <see cref="OfficialHorizonDays"/>; a later day has no official level, which the
-/// rule reports as no warning issued, not as clear.
+/// DHM's warning maps give levels for each of three dates (<see cref="DhmWarningSnapshot.Days"/>),
+/// and a leg gets the levels for its own date. The retired feed carried current levels with no
+/// dates; those apply to today and the next days up to <see cref="OfficialHorizonDays"/>. A day
+/// outside either has no official level, which the rule reports as no warning issued, not as clear.
 /// </para>
 /// <para>
 /// Rain is the day maximum over hill sample points only (rule 3); gusts over every sample point
@@ -70,7 +71,7 @@ public sealed class NepalRouteAssessor
 
     /// <summary>Creates the assessor.</summary>
     /// <param name="openMeteo">Model values and elevations.</param>
-    /// <param name="warnings">DHM's current district warnings, normally <see cref="DhmWarningsSource"/>.</param>
+    /// <param name="warnings">DHM's district warnings, normally <see cref="DhmWarningMapSource"/>.</param>
     /// <param name="closures">DoR closures, normally <see cref="DorClosureSource"/>.</param>
     /// <param name="routing">Road geometry for each leg.</param>
     /// <param name="timeProvider">Clock that decides today, Nepal time.</param>
@@ -91,8 +92,9 @@ public sealed class NepalRouteAssessor
     }
 
     /// <summary>
-    /// Days, counting today, that DHM's current warnings apply to. Default 3, the span of DHM's
-    /// three-day forecast. Raising it is more cautious; a leg past it has no official level.
+    /// Days, counting today, that undated warnings (the retired feed's) apply to. Default 3, the
+    /// span of DHM's three-day forecast. Dated warnings ignore it. Raising it is more cautious; a
+    /// leg past it has no official level.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">Below 1.</exception>
     public int OfficialHorizonDays
@@ -271,14 +273,16 @@ public sealed class NepalRouteAssessor
     private Dictionary<string, AlertLevel> OfficialLevels(DhmWarningSnapshot? warnings, IReadOnlyList<string> districtIds, DateOnly date, DateOnly today)
     {
         var levels = new Dictionary<string, AlertLevel>(StringComparer.Ordinal);
-        if (warnings is null || date.DayNumber - today.DayNumber >= OfficialHorizonDays)
+        var dated = warnings is { Days.Count: > 0 };
+        if (warnings is null || (dated ? !warnings.Days.Contains(date) : date.DayNumber - today.DayNumber >= OfficialHorizonDays))
         {
             return levels;
         }
 
         foreach (var id in districtIds)
         {
-            var level = warnings.LevelFor(Gazetteer.ById(id));
+            var district = Gazetteer.ById(id);
+            var level = dated ? warnings.LevelOn(district, date) : warnings.LevelFor(district);
             if (level > AlertLevel.Green)
             {
                 levels[id] = level;
