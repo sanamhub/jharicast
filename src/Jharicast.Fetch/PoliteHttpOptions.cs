@@ -68,6 +68,14 @@ public sealed class PoliteHttpOptions
     /// <summary>Hosts that are never requested: the kill switch, settable from configuration without a deploy. Case-insensitive.</summary>
     public HashSet<string> DisabledHosts { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// Hosts the caller runs itself, such as a self-hosted Open-Meteo or OSRM. Their robots.txt is
+    /// not read: it addresses crawlers on the public internet, not the operator of the server. Every
+    /// other rule (User-Agent, GET only, intervals, retries, breaker) still applies. Never list a
+    /// host someone else runs (ADR-0007).
+    /// </summary>
+    public HashSet<string> OperatedHosts { get; } = new(StringComparer.OrdinalIgnoreCase);
+
     /// <summary>Clock for intervals, backoff and the breaker. Default <see cref="TimeProvider.System"/>.</summary>
     public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
 

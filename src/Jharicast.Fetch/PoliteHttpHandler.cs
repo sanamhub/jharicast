@@ -85,7 +85,7 @@ public sealed class PoliteHttpHandler : DelegatingHandler
         request.Headers.TryAddWithoutValidation("User-Agent", _options.UserAgent);
 
         var gate = _gates.GetOrAdd(host, h => new HostGate(h, _options.IntervalFor(h), _options.TimeProvider));
-        if (!string.Equals(uri.AbsolutePath, "/robots.txt", StringComparison.Ordinal))
+        if (!_options.OperatedHosts.Contains(host) && !string.Equals(uri.AbsolutePath, "/robots.txt", StringComparison.Ordinal))
         {
             var robots = await RobotsFor(uri, gate, cancellationToken).ConfigureAwait(false);
             if (!robots.Policy.IsAllowed(_options.UserAgent, uri.PathAndQuery))

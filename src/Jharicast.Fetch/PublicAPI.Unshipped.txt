@@ -92,3 +92,4 @@ static Jharicast.Fetch.SourceHealth.operator !=(Jharicast.Fetch.SourceHealth? le
 static Jharicast.Fetch.SourceHealth.operator ==(Jharicast.Fetch.SourceHealth? left, Jharicast.Fetch.SourceHealth? right) -> bool
 static Jharicast.Fetch.SourceResult<T>.operator !=(Jharicast.Fetch.SourceResult<T>? left, Jharicast.Fetch.SourceResult<T>? right) -> bool
 static Jharicast.Fetch.SourceResult<T>.operator ==(Jharicast.Fetch.SourceResult<T>? left, Jharicast.Fetch.SourceResult<T>? right) -> bool
+Jharicast.Fetch.PoliteHttpOptions.OperatedHosts.get -> System.Collections.Generic.HashSet<string!>!

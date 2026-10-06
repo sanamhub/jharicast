@@ -7,6 +7,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `PoliteHttpOptions.OperatedHosts`: hosts the caller runs itself, such as a self-hosted
+  Open-Meteo, whose robots.txt is not read. Every other politeness rule still applies.
 - `RuleStatus.Unknown`: a rule whose source did not answer says so instead of passing.
   `RouteRuleSet.Worst` ranks Breach, Watch, Unknown, Pass. `ModelSample.Known`,
   `LegDayInput.OfficialKnown` and `LegDayInput.RoadKnown` carry what is missing.

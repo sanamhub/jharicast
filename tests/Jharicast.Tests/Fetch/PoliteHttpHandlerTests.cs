@@ -217,6 +217,24 @@ public sealed class PoliteHttpHandlerTests
     }
 
     [Fact]
+    public async Task An_operated_host_is_fetched_without_reading_its_robots_txt_and_others_still_obey_theirs()
+    {
+        var options = Options();
+        options.OperatedHosts.Add("meteo.internal");
+        var server = FakeServer.Always(_time, HttpStatusCode.OK, () => FakeServer.RobotsTxt("User-agent: *\nDisallow: /\n"));
+        using var client = new HttpClient(new PoliteHttpHandler(options, server));
+        var ct = TestContext.Current.CancellationToken;
+
+        using var own = await _time.Drive(client.GetAsync(new Uri("http://meteo.internal:8080/v1/forecast"), ct));
+        await Assert.ThrowsAsync<SourceUnavailableException>(() => _time.Drive(client.GetAsync(new Uri("https://api.example/v1/forecast"), ct)));
+
+        Assert.Equal(HttpStatusCode.OK, own.StatusCode);
+        Assert.Equal(1, server.Count);
+        Assert.Equal(["api.example"], server.RobotsSeen.Select(r => r.Uri.Host));
+        Assert.Equal(UserAgent, Assert.Single(server.Seen).UserAgent);
+    }
+
+    [Fact]
     public async Task Disabled_hosts_are_never_requested()
     {
         var options = Options();
