@@ -1,5 +1,8 @@
 # Jharicast
 
+[![CI](https://github.com/sanamhub/jharicast/actions/workflows/ci.yml/badge.svg)](https://github.com/sanamhub/jharicast/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/sanamhub/jharicast/blob/main/LICENSE)
+
 Weather and road rules for a route, per day, from global models and official Nepali warnings,
 in .NET. It tells you which of your rules a leg breaks, why, where each number came from, and
 when that answer changes. It is for riders and drivers planning a trip in Nepal, and for apps
@@ -153,6 +156,13 @@ against measured routes.
 A rider's storm report of 2026-09-24 did this by hand: pull ECMWF, GFS and ICON, compare with
 DHM's district warnings, apply four trip rules to every leg, recheck each evening. Jharicast's
 rules reproduce that report's own alert levels and trip verdicts in its tests.
+
+## Documentation
+
+The [wiki](https://github.com/sanamhub/jharicast/wiki) has guides with examples: sources and their
+health, the four rules and what each status means, the `jharicast` command, and how DHM's warning
+maps are read.
+
 
 ## Contributing and security
 

@@ -16,6 +16,11 @@ on:
 permissions:
   contents: read
 
+# Two pushes of the same tag must never publish side by side.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   DOTNET_NOLOGO: 'true'
   DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
@@ -45,6 +50,16 @@ jobs:
           fi
           ./scripts/changelog-section.sh "$tag" > /dev/null
           echo "tag, version and changelog agree: $tag"
+
+          # A stable release ships empty Unshipped files. The release runbook moves them to Shipped.
+          if [[ "$tag" != *-* ]]; then
+            for f in src/*/PublicAPI.Unshipped.txt; do
+              if grep -Ev '^#nullable enable[[:space:]]*$' "$f" | grep -q .; then
+                echo "::error::$f has entries for a stable release. Move them to Shipped first."
+                exit 1
+              fi
+            done
+          fi
 
   verify:
     needs: preflight
@@ -96,6 +111,7 @@ jobs:
     permissions:
       contents: write              # create the GitHub release
       id-token: write              # NuGet trusted publishing, so there is no long lived key
+      attestations: write          # provenance attestation on each nupkg
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -167,6 +183,13 @@ jobs:
                   --skip-duplicate
               if ($LASTEXITCODE -ne 0) { throw "dotnet nuget push failed for $($package.Name)" }
           }
+
+      # Provenance for exactly the files pushed: which workflow, commit and runner built them.
+      - name: attest the packages
+        if: github.event_name == 'push' || inputs.dry-run == false
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: files/out/*.nupkg
 
       # Notes come from CHANGELOG.md, not the commit log, so the release page and the changelog
       # cannot say different things.
