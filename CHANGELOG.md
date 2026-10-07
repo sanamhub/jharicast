@@ -5,6 +5,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0-alpha.1] - 2026-10-07
+
 ### Changed
 
 - **Breaking:** `DhmWarningsSource` is retired by default. It sends no request, reports
