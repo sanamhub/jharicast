@@ -132,7 +132,8 @@ from 70 mm to 90 mm on a rule already broken is not news.
 
 ## How it decides
 
-Four rules per leg and day, each `Pass`, `Watch` or `Breach`:
+Four rules per leg and day, each `Pass`, `Watch`, `Breach`, or `Unknown` when the source it reads
+did not answer:
 
 | Rule | Breach when |
 | --- | --- |
@@ -141,9 +142,11 @@ Four rules per leg and day, each `Pass`, `Watch` or `Breach`:
 | Hill rain | a model's day maximum on the leg's hill sections is over 64 mm, or at least half the ensemble members are |
 | Wind | a model's day maximum gust on the leg is over 40 km/h, or at least half the ensemble members are |
 
-An official warning is never lowered by a model. DHM's current warnings are applied to today and
-the next two days; a later day has no official level yet, and the output says so rather than
-showing it as clear. Global models smooth out rain on steep ground, and in the storm this was
+An official warning is never lowered by a model. DHM publishes its warnings as maps for three
+days, twice a day; each leg gets the level DHM drew for its districts on its own date. A day
+after the bulletin's three has no official level yet, and the output says so rather than showing
+it as clear. A day the bulletin should cover but does not, because DHM missed an issue, is
+`Unknown`. Global models smooth out rain on steep ground, and in the storm this was
 built from they were lower than DHM in 14 of 28 province-days, all in the mountains, so trust DHM
 there.
 
@@ -162,7 +165,6 @@ rules reproduce that report's own alert levels and trip verdicts in its tests.
 The [wiki](https://github.com/sanamhub/jharicast/wiki) has guides with examples: sources and their
 health, the four rules and what each status means, the `jharicast` command, and how DHM's warning
 maps are read.
-
 
 ## Contributing and security
 
