@@ -37,7 +37,8 @@ public sealed record NepalRouteAssessment(string RouteId, IReadOnlyList<NepalLeg
 /// DHM's warning maps give levels for each of three dates (<see cref="DhmWarningSnapshot.Days"/>),
 /// and a leg gets the levels for its own date. The retired feed carried current levels with no
 /// dates; those apply to today and the next days up to <see cref="OfficialHorizonDays"/>. A day
-/// outside either has no official level, which the rule reports as no warning issued, not as clear.
+/// outside either has no official level, which the rule reports as no warning issued, not as clear,
+/// except a date inside the horizon that the bulletin does not reach: that is Unknown.
 /// </para>
 /// <para>
 /// Rain is the day maximum over hill sample points only (rule 3); gusts over every sample point
@@ -213,7 +214,7 @@ public sealed class NepalRouteAssessor
                 Sample(forecast, ensembles, RainVariable, hillPoints, leg.Date),
                 Sample(forecast, ensembles, GustVariable, legPoints, leg.Date))
             {
-                OfficialKnown = warnings.Value is not null || leg.Date.DayNumber - today.DayNumber >= OfficialHorizonDays,
+                OfficialKnown = OfficialKnownOn(warnings.Value, leg.Date, today),
                 RoadKnown = closures.Value is not null,
             };
             legs.Add(new NepalLegDay(rules.Evaluate(input), input, samples.DistanceKm, samples.HillKm, [.. districtIds.Select(Gazetteer.ById)], inForce));
@@ -269,6 +270,13 @@ public sealed class NepalRouteAssessor
             list.Add(provenance);
         }
     }
+
+    // Past the horizon there is no warning to know of. Inside it, a dated snapshot must cover the
+    // date: a bulletin too old to reach it (DHM missed issues) is not "no warning issued".
+    private bool OfficialKnownOn(DhmWarningSnapshot? warnings, DateOnly date, DateOnly today) =>
+        date.DayNumber - today.DayNumber >= OfficialHorizonDays
+        || warnings is { Days.Count: 0 }
+        || (warnings is not null && warnings.Days.Contains(date));
 
     private Dictionary<string, AlertLevel> OfficialLevels(DhmWarningSnapshot? warnings, IReadOnlyList<string> districtIds, DateOnly date, DateOnly today)
     {

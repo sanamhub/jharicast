@@ -31,7 +31,9 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   when a new bulletin is out. The hazard is not on the map in a readable form, so warnings carry
   the new `Hazard.Unspecified`. ADR-0016.
 - `NepalRouteAssessor` gives each leg the official levels for its own date when the warnings are
-  dated, and none for a date the bulletin does not cover. `jharicast` reads the maps on live runs.
+  dated. A date inside `OfficialHorizonDays` that the newest bulletin does not reach (DHM missed
+  issues) is Unknown, not "no official warning"; a date past the horizon has no official level.
+  `jharicast` reads the maps on live runs.
 
 - `DhmWarningsSource.WarningsPage`: the page where DHM publishes its current warnings as maps,
   for apps that link to the official source.

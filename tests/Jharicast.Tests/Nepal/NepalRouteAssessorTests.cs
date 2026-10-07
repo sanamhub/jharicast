@@ -211,6 +211,29 @@ public sealed class NepalRouteAssessorTests
         Assert.Equal("no official warning", later.Assessment.Results[0].Reason);
     }
 
+    // DHM missed bulletins: the newest covers 22 to 24 Sep only. 25 Sep is inside the horizon and
+    // not covered, so Unknown; 27 Sep is past the horizon, so no warning issued.
+    [Fact]
+    public async Task A_date_inside_the_horizon_that_the_bulletin_misses_is_unknown()
+    {
+        var time = Clock();
+        var snapshot = new DhmWarningSnapshot([], [], new Provenance("dhm.warnings", SourceKind.Official, Now))
+        {
+            Days = [new(2026, 9, 22), new(2026, 9, 23), new(2026, 9, 24)],
+        };
+        var client = new OpenMeteoClient(new HttpClient(new FakeOpenMeteo(new DateOnly(2026, 9, 24), Deterministic, Member, Elevation)), new OpenMeteoOptions { TimeProvider = time });
+        var dor = new DorClosureSource(new HttpClient(StubHandler.Json(_ => NoClosures)), new MemorySnapshotStore(), time);
+        var osrm = new OsrmRouteProvider(new HttpClient(new StubHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(Fixtures.Read("osrm-route-birtamod-lumbini-synthetic.json")) })), new Uri("http://osrm.test/"));
+        var assessor = new NepalRouteAssessor(client, new FixedWarnings(snapshot), dor, osrm, time);
+
+        async Task<RuleResult> Official(DateOnly date) =>
+            Assert.Single((await assessor.AssessAsync(D1(date), RouteRuleSet.V1, CancellationToken.None)).Legs).Assessment.Results.Single(r => r.RuleId == RouteRuleSet.V1.OfficialRuleId);
+
+        Assert.Equal(RuleStatus.Pass, (await Official(new DateOnly(2026, 9, 24))).Status);
+        Assert.Equal(RuleStatus.Unknown, (await Official(new DateOnly(2026, 9, 25))).Status);
+        Assert.Equal(RuleStatus.Pass, (await Official(new DateOnly(2026, 9, 27))).Status);
+    }
+
     private sealed class FixedWarnings(DhmWarningSnapshot snapshot) : ISource<DhmWarningSnapshot>
     {
         public Task<SourceResult<DhmWarningSnapshot>> FetchAsync(CancellationToken cancellationToken) =>
