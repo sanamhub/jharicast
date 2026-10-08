@@ -12,8 +12,10 @@ that watch a trip for them.
 > and the District Administration Office. Jharicast never says a route is safe: its best answer,
 > `Pass`, means only that none of your rules is broken.
 
-**Status: in development.** Nothing is published to nuget.org yet, and the API can change
-until 1.0.
+**Status: alpha.** `Jharicast`, `Jharicast.Fetch`, `Jharicast.OpenMeteo` and `Jharicast.Routing`
+are on nuget.org as 0.1.0-alpha.1, so `dotnet add package` needs `--prerelease`. The API can
+change until 1.0. `Jharicast.Nepal` and `Jharicast.Cli` are not published yet (see Permission
+below).
 
 ## Data terms, first
 
