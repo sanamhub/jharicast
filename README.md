@@ -13,7 +13,7 @@ that watch a trip for them.
 > `Pass`, means only that none of your rules is broken.
 
 **Status: alpha.** `Jharicast`, `Jharicast.Fetch`, `Jharicast.OpenMeteo` and `Jharicast.Routing`
-are on nuget.org as 0.1.0-alpha.1, so `dotnet add package` needs `--prerelease`. The API can
+are on nuget.org as 0.1.0-alpha.2, so `dotnet add package` needs `--prerelease`. The API can
 change until 1.0. `Jharicast.Nepal` and `Jharicast.Cli` are not published yet (see Permission
 below).
 
