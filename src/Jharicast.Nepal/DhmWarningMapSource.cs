@@ -177,7 +177,9 @@ public sealed partial class DhmWarningMapSource : ISource<DhmWarningSnapshot>
         };
     }
 
-    // The newest published bulletin with a map for each of days 1 to 3.
+    // The newest published bulletin with at least one day's map. A day it has no map for stays out
+    // of the snapshot's Days, so the assessor says Unknown for that date instead of reading an
+    // older bulletin's map as if it were current.
     internal static Bulletin ReadList(ReadOnlySpan<byte> utf8Json)
     {
         var reader = new Utf8JsonReader(utf8Json);
@@ -215,13 +217,18 @@ public sealed partial class DhmWarningMapSource : ISource<DhmWarningSnapshot>
             }
 
             images.Sort((a, b) => a.Day.CompareTo(b.Day));
-            if (images.Select(i => i.Day).SequenceEqual([1, 2, 3]) && (newest is null || created > newest.CreatedAt))
+            if (images.Select(i => i.Day).Distinct().Count() != images.Count)
+            {
+                throw new InvalidDataException($"bulletin {Text(item, "id")} has two maps for one day.");
+            }
+
+            if (images.Count > 0 && (newest is null || created > newest.CreatedAt))
             {
                 newest = new Bulletin(Text(item, "id") ?? "", created, images);
             }
         }
 
-        return newest ?? throw new InvalidDataException("no published bulletin with maps for days 1 to 3.");
+        return newest ?? throw new InvalidDataException("no published bulletin with a map.");
     }
 
     private static string? Text(JsonElement element, string name) =>

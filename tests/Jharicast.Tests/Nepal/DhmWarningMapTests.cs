@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Jharicast.Fetch;
@@ -67,6 +68,7 @@ public sealed class DhmWarningMapTests
         { "bad filter", Build(1, 1, 2, [9, 0, 0, 0]) },
         { "palette index past the end", Build(1, 1, 3, [0, 5], palette: [1, 2, 3]) },
         { "truncated", Fixtures.Read(Map12340Day1)[..5000] },
+        { "bad crc", Flip(Fixtures.Read(Map12340Day1), 2000) },
     };
 
     [Theory]
@@ -232,7 +234,40 @@ public sealed class DhmWarningMapTests
     }
 
     [Fact]
-    public async Task A_list_with_no_complete_bulletin_is_drift()
+    public async Task A_newest_bulletin_with_one_map_gives_that_day_only_not_an_older_bulletin_s_days()
+    {
+        var list = JsonNode.Parse(Fixtures.Read("dhm-warning-maps-list-2026-10-06.json"))!;
+        var images = list["data"]![0]!["weather_map_images"]!.AsArray();
+        foreach (var image in images.Where(i => (int)i!["weather_type_day_id"]! != 1).ToList())
+        {
+            images.Remove(image);
+        }
+
+        var (source, stub, _) = Source(Serve(list: Encoding.UTF8.GetBytes(list.ToJsonString())));
+
+        var result = await source.FetchAsync(CancellationToken.None);
+
+        Assert.Equal(SourceStatus.Fresh, result.Health.Status);
+        Assert.Equal([new DateOnly(2026, 10, 6)], result.Value!.Days);
+        Assert.Equal(new DateTimeOffset(2026, 10, 6, 10, 27, 59, 483, TimeSpan.Zero), result.Value.Provenance.IssuedAt);
+        Assert.Equal(2, stub.Seen.Count);
+    }
+
+    [Fact]
+    public async Task Two_maps_for_one_day_are_drift()
+    {
+        var list = Encoding.UTF8.GetString(Fixtures.Read("dhm-warning-maps-list-2026-10-06.json"))
+            .Replace("\"weather_type_day_id\":2", "\"weather_type_day_id\":1", StringComparison.Ordinal);
+        var (source, _, _) = Source(Serve(list: Encoding.UTF8.GetBytes(list)));
+
+        var result = await source.FetchAsync(CancellationToken.None);
+
+        Assert.Equal(SourceStatus.Drifting, result.Health.Status);
+        Assert.Contains("two maps for one day", result.Health.Detail, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_list_with_no_map_is_drift()
     {
         var (source, _, _) = Source(Serve(list: """{"data":[{"id":"1","status":"1","create_at":"2026-10-06T10:27:59Z","weather_map_images":[]}]}"""u8.ToArray()));
 
@@ -313,15 +348,22 @@ public sealed class DhmWarningMapTests
         return file.ToArray();
     }
 
-    // The decoder does not check CRCs, so zeros stand in for them.
+    // One bit flipped inside the image data, which still inflates: only the CRC catches it.
+    private static byte[] Flip(byte[] png, int at)
+    {
+        png[at] ^= 1;
+        return png;
+    }
+
     private static void Chunk(Stream file, string type, byte[] data)
     {
-        Span<byte> length = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(length, (uint)data.Length);
-        file.Write(length);
-        file.Write(Encoding.ASCII.GetBytes(type));
-        file.Write(data);
-        file.Write(new byte[4]);
+        Span<byte> word = stackalloc byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(word, (uint)data.Length);
+        file.Write(word);
+        byte[] typed = [.. Encoding.ASCII.GetBytes(type), .. data];
+        file.Write(typed);
+        BinaryPrimitives.WriteUInt32BigEndian(word, Png.Crc32(typed));
+        file.Write(word);
     }
 
     private sealed class SnapshotComparer : IEqualityComparer<DhmWarningSnapshot?>

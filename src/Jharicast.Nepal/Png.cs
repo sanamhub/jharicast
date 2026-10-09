@@ -21,6 +21,8 @@ internal static class Png
 
     private static readonly byte[] Signature = [137, 80, 78, 71, 13, 10, 26, 10];
 
+    private static readonly uint[] CrcTable = BuildCrcTable();
+
     /// <summary>Decodes to RGB, three bytes per pixel, rows top to bottom. Alpha is dropped.</summary>
     /// <param name="png">The file.</param>
     /// <returns>The image.</returns>
@@ -51,6 +53,13 @@ internal static class Png
             }
 
             var data = png.Slice(at + 8, (int)length);
+            // A damaged transfer can still inflate to the right byte count, and a flipped pixel
+            // reads as a different district's level, so every chunk's CRC is checked.
+            if (BinaryPrimitives.ReadUInt32BigEndian(png[(at + 8 + (int)length)..]) != Crc32(png.Slice(at + 4, 4 + (int)length)))
+            {
+                throw new InvalidDataException($"PNG {System.Text.Encoding.ASCII.GetString(type)} chunk fails its CRC.");
+            }
+
             at += 12 + (int)length;
             if (type.SequenceEqual("IHDR"u8))
             {
@@ -151,6 +160,37 @@ internal static class Png
         }
 
         return pixels;
+    }
+
+    /// <summary>The CRC-32 of PNG chunks (ISO 3309, reflected, polynomial 0xEDB88320).</summary>
+    /// <param name="bytes">The chunk type and data.</param>
+    /// <returns>The CRC.</returns>
+    internal static uint Crc32(ReadOnlySpan<byte> bytes)
+    {
+        var crc = 0xFFFFFFFFu;
+        foreach (var b in bytes)
+        {
+            crc = CrcTable[(crc ^ b) & 0xFF] ^ (crc >> 8);
+        }
+
+        return crc ^ 0xFFFFFFFFu;
+    }
+
+    private static uint[] BuildCrcTable()
+    {
+        var table = new uint[256];
+        for (var n = 0u; n < 256; n++)
+        {
+            var c = n;
+            for (var k = 0; k < 8; k++)
+            {
+                c = (c & 1) != 0 ? 0xEDB88320u ^ (c >> 1) : c >> 1;
+            }
+
+            table[n] = c;
+        }
+
+        return table;
     }
 
     private static int Paeth(int a, int b, int c)

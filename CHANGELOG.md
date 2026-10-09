@@ -5,6 +5,15 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- `DhmWarningMapSource` reads DHM's newest published bulletin even when it has maps for only some
+  of days 1 to 3. It used to fall back to the newest complete bulletin, which could be a day old,
+  and show its levels as current. A day without a map is now left out of `Days`, so the official
+  rule says Unknown for it. Two maps for one day are drift.
+- The warning-map decoder checks every PNG chunk's CRC. A damaged download that still inflated
+  to the right size could read as another district's level.
+
 ## [0.1.0-alpha.1] - 2026-10-07
 
 ### Changed
