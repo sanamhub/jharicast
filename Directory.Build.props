@@ -26,7 +26,7 @@
   <!-- Lockstep versioning: every package ships this one version. release.yml compares it with
        the pushed tag and refuses to publish when they differ. -->
   <PropertyGroup Label="Version">
-    <Version>0.1.0-alpha.1</Version>
+    <Version>0.1.0-alpha.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Label="Repository">

@@ -5,6 +5,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-10-09
+
+The core packages are unchanged and move to 0.1.0-alpha.2 only because every package shares one
+version. The fixes are in `Jharicast.Nepal`, which is not on nuget.org yet.
+
 ### Fixed
 
 - `DhmWarningMapSource` reads DHM's newest published bulletin even when it has maps for only some

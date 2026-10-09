@@ -150,7 +150,8 @@ public sealed class RouteCommandTests
     {
         var agent = Wiring.UserAgent("ops@example.org");
 
-        Assert.StartsWith("Jharicast/0.1.0-alpha.1 (+https://github.com/sanamhub/jharicast; ops@example.org)", agent, StringComparison.Ordinal);
+        // Any version: the test must not fail on every release.
+        Assert.Matches(@"^Jharicast/\d+\.\d+\.\d+(-[0-9A-Za-z.]+)? \(\+https://github\.com/sanamhub/jharicast; ops@example\.org\)", agent);
     }
 
     // Open-Meteo's robots.txt is the maintainer's open question. When a host says no, the CLI
